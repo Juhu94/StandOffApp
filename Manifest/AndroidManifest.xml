@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.julia.sensor_standoffapp">
+    package="com.example.julian.sensor_standoffapp">
 
-    <uses-feature android:name="android.hardware.sensor.proximity"
-        android:required="true" />
+    <uses-feature android:name="android.hardware.sensor.proximity" android:required="true" />
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -21,13 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PlayActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".HighscoreActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".HelpActivity" />
-        <activity android:name=".ResultActivity"
-            android:screenOrientation="portrait"></activity>
+        <activity android:name=".PlayActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".HighscoreActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".HelpActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ResultActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".DeviceListActivity" android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
