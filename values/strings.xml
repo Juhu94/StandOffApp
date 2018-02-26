@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">StandOff</string>
+    <string name="btnPlay">Play</string>
+    <string name="btnHighScore">Highscore</string>
+    <string name="btnHelp">Help</string>
+    <string name="btnMulti">Multiplayer</string>
+    <string name="btnResult">Result</string>
+</resources>
