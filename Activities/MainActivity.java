@@ -1,17 +1,27 @@
-package com.example.julia.sensor_standoffapp;
+package com.example.julian.sensor_standoffapp;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final static String TAG = "MainActivity";
+    private static final int REQUEST_ENABLE_BT = 1;
 
     private Button btnPlay;
     private Button btnHighscore;
     private Button btnHelp;
+    private Button btnDuel;
+
+    private boolean BTPresent = false;
+
+    private BluetoothAdapter mBluetoothAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +31,28 @@ public class MainActivity extends AppCompatActivity {
         btnPlay = (Button)this.findViewById(R.id.btnPlay);
         btnHighscore = (Button)this.findViewById(R.id.btnHighScore);
         btnHelp = (Button)this.findViewById(R.id.btnHelp);
+        btnDuel = (Button)findViewById(R.id.btnDuel);
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, PlayActivity.class);
                 startActivity(intent);
-                Log.d("New Activity", ": PlayActivity");
+                Log.d(TAG, ": PlayActivity");
+            }
+        });
+
+        btnDuel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(BTPresent){
+                    multiplayerMode();
+                }else{
+                    Toast.makeText(getApplicationContext(),"Your device does not support Bluetooth, Can't access multiplayer mode.", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
@@ -36,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, HighscoreActivity.class);
                 startActivity(intent);
-                Log.d("New Activity", ": HighscoreActivity");
+                Log.d(TAG, ": HighscoreActivity");
             }
         });
 
@@ -45,8 +70,32 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, HelpActivity.class);
                 startActivity(intent);
-                Log.d("New Activity", ": HelpActivity");
+                Log.d(TAG, ": HelpActivity");
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        if(mBluetoothAdapter == null) {
+            BTPresent = false;
+            Toast.makeText(getApplicationContext(), "Bluetooth is not supported on this device", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            BTPresent = true;
+            if(!mBluetoothAdapter.isEnabled()){
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+        }
+        super.onResume();
+    }
+
+    private void multiplayerMode() {
+        Log.d(TAG, "multiplayerMode: Attempting to start a new activity 'deviceListActivity'");
+
+        Intent deviceListActivityIntent = new Intent(this, DeviceListActivity.class);
+        startActivity(deviceListActivityIntent);
+
     }
 }
