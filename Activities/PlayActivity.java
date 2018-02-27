@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 
 import static android.R.attr.button;
@@ -33,7 +34,6 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     TextView ETime;
     TextView acc;
     TextView reac;
-    Button button;
 
     double avrage;
     LinkedList<Float> accAvreage = new LinkedList<Float>();
@@ -42,8 +42,9 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     boolean proxyTrigger = false;
     boolean accTrigger = false;
     boolean sigTrigger = false;
-    boolean countdown = false;
+    boolean abortTrigger = false;
 
+    long timeReact;
     long timeStart;
     long timeEnd;
 
@@ -69,7 +70,6 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         ETime = (TextView) findViewById(R.id.tvEndTime);
         acc = (TextView) findViewById(R.id.tvAcc);
         reac = (TextView) findViewById(R.id.tvReac);
-        button = (Button) findViewById(R.id.btn);
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -89,6 +89,9 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         if (mSensormaneger.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null){
             mSensorAcc = mSensormaneger.getDefaultSensor(Sensor.TYPE_ACCELEROMETER); //value 2
         }
+        else {
+            Toast.makeText(context, "ACCELEROMETER sensor is missing.", Toast.LENGTH_LONG).show();
+        }
 
         if (mSensormaneger.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION) != null){
             mSensorSig = mSensormaneger.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
@@ -98,22 +101,17 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 
         if (mSensormaneger.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null) {
             mSensorGyro = mSensormaneger.getDefaultSensor(Sensor.TYPE_GYROSCOPE); //value 3
+        }else {
+            Toast.makeText(context, "GYROSCOPE sensor is missing.", Toast.LENGTH_LONG).show();
         }
 
         //TODO Behöver kolla proximitySensor också, ta bort den andra proximitySensorn?
         if (mSensormaneger.getDefaultSensor(Sensor.TYPE_PROXIMITY) != null) {
             mSensorProxy = mSensormaneger.getDefaultSensor(Sensor.TYPE_PROXIMITY);
             proximitySensor = mSensormaneger.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        }else {
+            Toast.makeText(context, "PROXIMITY sensor is missing.", Toast.LENGTH_LONG).show();
         }
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                proxyTrigger = true;
-                //sigTrigger = true;
-                register();
-            }
-        });
 
         register();
     }
@@ -142,23 +140,32 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         time = null;
         acc = null;
         reac = null;
-        button = null;
         mSensormaneger = null;
         mSensorSig = null;
         mSensorAcc = null;
         accAvreage = null;
     }
 
-    public void proxyTestStart(long time){
-        timeStart = time;
+    public void startGame(){
+        if(!abortTrigger) {
+            timeReact = System.currentTimeMillis();
+            proxyTrigger = true;
+            vibrator.vibrate(500);
+        }else {
+            getWindow().getDecorView().setBackgroundColor(Color.RED);
+            Toast.makeText(context,"No cheating! ",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void proxyTestStart(){
+        timeStart = System.currentTimeMillis();
         gyroTrigger = true;
         avrage = 0.0f;
         accAvreage.clear();
     }
 
-    public void proxyTestEnd(long time){
-        Toast.makeText(context,"proxyTestEnd",Toast.LENGTH_SHORT).show();
-        timeEnd = time;
+    public void proxyTestEnd(){
+        timeEnd = System.currentTimeMillis();
         proxyTrigger = false;
         gyroTrigger = false;
         accTrigger = true;
@@ -166,23 +173,22 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         h.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context,"HANDLER",Toast.LENGTH_SHORT).show();
                 unRegister();
-
+                mSensormaneger.registerListener((SensorEventListener) context, mSensorProxy, mSensormaneger.SENSOR_DELAY_UI);
                 printResults();
             }
         },200);
     }
 
-    public void sigTestStart(long time){
-        timeStart = time;
+/*    public void sigTestStart(){
+        timeStart = System.currentTimeMillis();
         gyroTrigger = true;
         avrage =0.0f;
         accAvreage.clear();
-    }
+    }*/
 
-    public void sigTestEnd(long time){
-        timeEnd = time;
+/*    public void sigTestEnd(){
+        timeEnd = System.currentTimeMillis();
         sigTrigger = false;
         gyroTrigger = false;
         accTrigger = true;
@@ -194,20 +200,17 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                 printResults();
             }
         },200);
-    }
+    }*/
 
     private void startCoundown() {
 
 
         countDownTimer = new CountDownTimer(3 * 1000, 1000) {
             @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
+            public void onTick(long millisUntilFinished) {}
             @Override
             public void onFinish() {
-                vibrator.vibrate(500);
+                startGame();
             }
         };
 
@@ -217,12 +220,13 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     private void printResults() {
         STime.setText(Long.toString(timeStart));
         ETime.setText(Long.toString(timeEnd));
-        time.setText(Long.toString(timeEnd - timeStart));
-        for (int i = 0; i < accAvreage.size(); i++){       //calculates the avrage
+        time.setText(Long.toString(timeEnd - timeStart));       //the draw time
+        reac.setText(Long.toString(timeStart - timeReact));     //the react time
+        for (int i = 0; i < accAvreage.size(); i++){               //calculates the avrage accuracy
             avrage += accAvreage.get(i);
         }
         avrage = avrage/accAvreage.size();
-        acc.setText(String.valueOf(avrage));
+        acc.setText(String.valueOf(avrage));                    //the accuracy
     }
 
     @Override
@@ -240,28 +244,23 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 
         if (event.sensor.getType() == mSensorGyro.getType() && gyroTrigger) {
             if (event.values[2] > -0.3 && event.values[2] < 0.3) {
-                proxyTestEnd(event.timestamp);
-                Toast.makeText(context,"END",Toast.LENGTH_SHORT).show();
+                proxyTestEnd();
                 //sigTestEnd(event.timestamp);
             }
         }
 
-        if (event.sensor.getType() == mSensorProxy.getType() && proxyTrigger) {
-            if (event.values[0] > 0) {
-                proxyTestStart(event.timestamp);
-                Toast.makeText(context,"START",Toast.LENGTH_SHORT).show();
-            }
-        }
+        if(event.sensor.getType() == mSensorProxy.getType()){
 
-        if(event.sensor.getType() == mSensorProxy.getType() && !proxyTrigger){
-
-            if(event.values[0] < mSensorProxy.getMaximumRange()) {
+            if(event.values[0] < mSensorProxy.getMaximumRange() && !proxyTrigger) {
                 startCoundown();
                 Toast.makeText(context,"Countdown started, Be ready",Toast.LENGTH_SHORT).show();
-                proxyTrigger = true;
+                abortTrigger = false;
 
-            } else {
-                getWindow().getDecorView().setBackgroundColor(Color.GREEN);
+            }else if(event.values[0] > 0 && proxyTrigger && !abortTrigger) {
+                proxyTestStart();
+
+            }else if(event.values[0] > 0) {
+                abortTrigger = true;
             }
         }
     }
