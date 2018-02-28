@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.erikj.sensor_standoffapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,41 +18,38 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.sql.Timestamp;
 import java.util.LinkedList;
-
-import static android.R.attr.button;
 
 public class PlayActivity extends AppCompatActivity implements SensorEventListener{
 
     private Button btnResult;
 
-    Context context;
+    private Context context;
 
-    TextView time;
-    TextView STime;
-    TextView ETime;
-    TextView acc;
-    TextView reac;
+    private TextView time;
+    private TextView STime;
+    private TextView ETime;
+    private TextView acc;
+    private TextView react;
 
-    double avrage;
-    LinkedList<Float> accAvreage = new LinkedList<Float>();
+    private double average;
+    private LinkedList<Float> accAverage = new LinkedList<Float>();
 
-    boolean gyroTrigger = false;
-    boolean proxyTrigger = false;
-    boolean accTrigger = false;
-    boolean sigTrigger = false;
-    boolean abortTrigger = false;
+    private boolean gyroTrigger = false;
+    private boolean proxyTrigger = false;
+    private boolean accTrigger = false;
+    private boolean sigTrigger = false;
+    private boolean abortTrigger = false;
 
-    long timeReact;
-    long timeStart;
-    long timeEnd;
+    private long timeReact;
+    private long timeStart;
+    private long timeEnd;
 
-    SensorManager mSensormaneger;
-    Sensor mSensorAcc;
-    Sensor mSensorSig;
-    Sensor mSensorGyro;
-    Sensor mSensorProxy;
+    private SensorManager mSensorManager;
+    private Sensor mSensorAcc;
+    private Sensor mSensorSig;
+    private Sensor mSensorGyro;
+    private Sensor mSensorProxy;
     private Sensor proximitySensor;
 
     private CountDownTimer countDownTimer;
@@ -69,7 +66,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         STime = (TextView) findViewById(R.id.tvStartTime);
         ETime = (TextView) findViewById(R.id.tvEndTime);
         acc = (TextView) findViewById(R.id.tvAcc);
-        reac = (TextView) findViewById(R.id.tvReac);
+        react = (TextView) findViewById(R.id.tvReac);
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -85,30 +82,30 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-        mSensormaneger = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
-        if (mSensormaneger.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null){
-            mSensorAcc = mSensormaneger.getDefaultSensor(Sensor.TYPE_ACCELEROMETER); //value 2
+        mSensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
+        if (mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null){
+            mSensorAcc = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER); //value 2
         }
         else {
             Toast.makeText(context, "ACCELEROMETER sensor is missing.", Toast.LENGTH_LONG).show();
         }
 
-        if (mSensormaneger.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION) != null){
-            mSensorSig = mSensormaneger.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
+        if (mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION) != null){
+            mSensorSig = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
         }else {
             Toast.makeText(context, "SIGNIFICANT_MOTION sensor is missing.", Toast.LENGTH_LONG).show();
         }
 
-        if (mSensormaneger.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null) {
-            mSensorGyro = mSensormaneger.getDefaultSensor(Sensor.TYPE_GYROSCOPE); //value 3
+        if (mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null) {
+            mSensorGyro = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE); //value 3
         }else {
             Toast.makeText(context, "GYROSCOPE sensor is missing.", Toast.LENGTH_LONG).show();
         }
 
         //TODO Behöver kolla proximitySensor också, ta bort den andra proximitySensorn?
-        if (mSensormaneger.getDefaultSensor(Sensor.TYPE_PROXIMITY) != null) {
-            mSensorProxy = mSensormaneger.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-            proximitySensor = mSensormaneger.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        if (mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY) != null) {
+            mSensorProxy = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+            proximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         }else {
             Toast.makeText(context, "PROXIMITY sensor is missing.", Toast.LENGTH_LONG).show();
         }
@@ -117,33 +114,33 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void unRegister(){
-        mSensormaneger.unregisterListener((SensorEventListener) context);
+        mSensorManager.unregisterListener((SensorEventListener) context);
     }
 
     public void register(){
-        mSensormaneger.registerListener((SensorEventListener) context, mSensorAcc, mSensormaneger.SENSOR_DELAY_UI);
-        mSensormaneger.registerListener((SensorEventListener) context, mSensorSig, mSensormaneger.SENSOR_DELAY_UI);
-        mSensormaneger.registerListener((SensorEventListener) context, mSensorGyro, mSensormaneger.SENSOR_DELAY_UI);
-        mSensormaneger.registerListener((SensorEventListener) context, mSensorProxy, mSensormaneger.SENSOR_DELAY_UI);
+        mSensorManager.registerListener((SensorEventListener) context, mSensorAcc, mSensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener((SensorEventListener) context, mSensorSig, mSensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener((SensorEventListener) context, mSensorGyro, mSensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener((SensorEventListener) context, mSensorProxy, mSensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mSensormaneger.unregisterListener(this);
+        mSensorManager.unregisterListener(this);
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        mSensormaneger.unregisterListener(this);
+        mSensorManager.unregisterListener(this);
         time = null;
         acc = null;
-        reac = null;
-        mSensormaneger = null;
+        react = null;
+        mSensorManager = null;
         mSensorSig = null;
         mSensorAcc = null;
-        accAvreage = null;
+        accAverage = null;
     }
 
     public void startGame(){
@@ -160,8 +157,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     public void proxyTestStart(){
         timeStart = System.currentTimeMillis();
         gyroTrigger = true;
-        avrage = 0.0f;
-        accAvreage.clear();
+        average = 0.0f;
+        accAverage.clear();
     }
 
     public void proxyTestEnd(){
@@ -174,7 +171,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void run() {
                 unRegister();
-                mSensormaneger.registerListener((SensorEventListener) context, mSensorProxy, mSensormaneger.SENSOR_DELAY_UI);
+                mSensorManager.registerListener((SensorEventListener) context, mSensorProxy, mSensorManager.SENSOR_DELAY_UI);
                 printResults();
             }
         },200);
@@ -183,8 +180,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 /*    public void sigTestStart(){
         timeStart = System.currentTimeMillis();
         gyroTrigger = true;
-        avrage =0.0f;
-        accAvreage.clear();
+        average =0.0f;
+        accAverage.clear();
     }*/
 
 /*    public void sigTestEnd(){
@@ -221,19 +218,19 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         STime.setText(Long.toString(timeStart));
         ETime.setText(Long.toString(timeEnd));
         time.setText(Long.toString(timeEnd - timeStart));       //the draw time
-        reac.setText(Long.toString(timeStart - timeReact));     //the react time
-        for (int i = 0; i < accAvreage.size(); i++){               //calculates the avrage accuracy
-            avrage += accAvreage.get(i);
+        react.setText(Long.toString(timeStart - timeReact));     //the react time
+        for (int i = 0; i < accAverage.size(); i++){               //calculates the average accuracy
+            average += accAverage.get(i);
         }
-        avrage = avrage/accAvreage.size();
-        acc.setText(String.valueOf(avrage));                    //the accuracy
+        average = average/ accAverage.size();
+        acc.setText(String.valueOf(average));                    //the accuracy
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
 
         if (accTrigger && event.sensor.getType() == mSensorAcc.getType()){
-            accAvreage.add(event.values[1]);
+            accAverage.add(event.values[1]);
         }
 
 

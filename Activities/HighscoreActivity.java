@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.example.erikj.sensor_standoffapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

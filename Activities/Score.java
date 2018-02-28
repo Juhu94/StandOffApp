@@ -1,4 +1,4 @@
-package com.example.vaskslem.uppgift2;
+package com.example.erikj.sensor_standoffapp;
 
 import java.text.DateFormat;
 import java.util.Calendar;

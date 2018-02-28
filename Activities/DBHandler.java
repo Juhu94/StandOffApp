@@ -1,4 +1,4 @@
-package com.example.vaskslem.uppgift2;
+package com.example.erikj.sensor_standoffapp;
 
 import android.content.ContentValues;
 import android.content.Context;
