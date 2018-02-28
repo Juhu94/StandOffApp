@@ -1,4 +1,4 @@
-package com.example.erikj.sensor_standoffapp;
+package com.example.lukas.standoff;
 
 import android.content.Context;
 import android.content.Intent;
@@ -215,15 +215,17 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void printResults() {
-        STime.setText(Long.toString(timeStart));
-        ETime.setText(Long.toString(timeEnd));
-        time.setText(Long.toString(timeEnd - timeStart));       //the draw time
-        react.setText(Long.toString(timeStart - timeReact));     //the react time
+        Intent intent = new Intent(PlayActivity.this, ResultActivity.class); //New intent to start result activity
+        intent.putExtra("timeStart", timeStart);
+        intent.putExtra("timeEnd", timeEnd);
+        intent.putExtra("totalTime", timeEnd - timeStart);      //the draw time
+        intent.putExtra("reaction", timeStart - timeReact);    //the react time
         for (int i = 0; i < accAverage.size(); i++){               //calculates the average accuracy
             average += accAverage.get(i);
         }
         average = average/ accAverage.size();
-        acc.setText(String.valueOf(average));                    //the accuracy
+        intent.putExtra("accurate", average);   //the accuracy
+        startActivity(intent);
     }
 
     @Override
