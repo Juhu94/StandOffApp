@@ -5,4 +5,10 @@
     <string name="btnHelp">Help</string>
     <string name="btnMulti">Multiplayer</string>
     <string name="btnResult">Result</string>
+    <string name="tvStartTime">Start time: </string>
+    <string name="tvAccurate">Accurate: </string>
+    <string name="tvEndTime">End time: </string>
+    <string name="tvReaction">Reaction: </string>
+    <string name="tvTotalTime">Total time: </string>
+    <string name="btnMenu">Back to menu</string>
 </resources>
