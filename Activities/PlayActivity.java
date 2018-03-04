@@ -1,4 +1,4 @@
-package com.example.lukas.standoff;
+package com.mah.simon.standoffapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,25 +12,13 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.LinkedList;
 
 public class PlayActivity extends AppCompatActivity implements SensorEventListener{
 
-    private Button btnResult;
-
     private Context context;
-
-    private TextView time;
-    private TextView STime;
-    private TextView ETime;
-    private TextView acc;
-    private TextView react;
 
     private double average;
     private LinkedList<Float> accAverage = new LinkedList<Float>();
@@ -50,7 +38,6 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     private Sensor mSensorSig;
     private Sensor mSensorGyro;
     private Sensor mSensorProxy;
-    private Sensor proximitySensor;
 
     private CountDownTimer countDownTimer;
     private Vibrator vibrator;
@@ -62,25 +49,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 
         context = this;
 
-        time = (TextView) findViewById(R.id.tvTime);
-        STime = (TextView) findViewById(R.id.tvStartTime);
-        ETime = (TextView) findViewById(R.id.tvEndTime);
-        acc = (TextView) findViewById(R.id.tvAcc);
-        react = (TextView) findViewById(R.id.tvReac);
-
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-
-        btnResult = (Button)this.findViewById(R.id.btnResult);
-
-        btnResult.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(PlayActivity.this, ResultActivity.class);
-                startActivity(intent);
-                Log.d("New Activity", ": PlayActivity");
-            }
-        });
 
         mSensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null){
@@ -102,10 +71,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
             Toast.makeText(context, "GYROSCOPE sensor is missing.", Toast.LENGTH_LONG).show();
         }
 
-        //TODO Behöver kolla proximitySensor också, ta bort den andra proximitySensorn?
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY) != null) {
             mSensorProxy = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-            proximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         }else {
             Toast.makeText(context, "PROXIMITY sensor is missing.", Toast.LENGTH_LONG).show();
         }
@@ -134,13 +101,12 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     protected void onDestroy(){
         super.onDestroy();
         mSensorManager.unregisterListener(this);
-        time = null;
-        acc = null;
-        react = null;
         mSensorManager = null;
         mSensorSig = null;
         mSensorAcc = null;
         accAverage = null;
+        countDownTimer = null;
+        vibrator = null;
     }
 
     public void startGame(){
@@ -200,7 +166,6 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     }*/
 
     private void startCoundown() {
-
 
         countDownTimer = new CountDownTimer(3 * 1000, 1000) {
             @Override
