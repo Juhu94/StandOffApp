@@ -1,4 +1,4 @@
-package com.example.erikj.sensor_standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -22,11 +22,15 @@ public class DeviceListActivity extends AppCompatActivity {
 
     private ListView lvDevices;
     private Button btnScan;
+    private Button btnConnect;
 
     private ArrayList<BluetoothDevice> mBTDevices;
     private BluetoothDevice mBTDevice;
     private BluetoothAdapter mBluetoothAdapter;
     private DeviceListAdapter mDeviceListAdapter;
+
+    private BluetoothConnectThread mConnectThread;
+    private BluetoothAcceptThread mAcceptThread;
 
     private final static String TAG = "DeviceListActivity";
 
@@ -38,6 +42,7 @@ public class DeviceListActivity extends AppCompatActivity {
         mBTDevices = new ArrayList<>();
         lvDevices = (ListView)findViewById(R.id.lvDevices);
         btnScan = (Button)findViewById(R.id.btnScan);
+        btnConnect = (Button) findViewById(R.id.btnConnect);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         Log.d(TAG, "enableDiscoverable: Making the device discoverable for 120 seconds");
@@ -45,6 +50,9 @@ public class DeviceListActivity extends AppCompatActivity {
         Intent discoverableIntent = new Intent(mBluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(mBluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
         startActivity(discoverableIntent);
+
+        mAcceptThread = new BluetoothAcceptThread();
+        mAcceptThread.start();
 
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,8 +65,9 @@ public class DeviceListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mBluetoothAdapter.cancelDiscovery();
+                mBTDevice = mBTDevices.get(position);
 
-                Log.d(TAG, "onItemClick: You Clicked on a device");
+/*               Log.d(TAG, "onItemClick: You Clicked on a device");
                 String deviceName = mBTDevices.get(position).getName();
                 String deviceAddress = mBTDevices.get(position).getAddress();
 
@@ -67,11 +76,18 @@ public class DeviceListActivity extends AppCompatActivity {
 
                 if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
                     Log.d(TAG, "Trying to pait with " +deviceName);
-                    mBTDevices.get(position).createBond();
+        //            mBTDevices.get(position).createBond();
 
                     mBTDevice = mBTDevices.get(position);
 
-                }
+                } */
+            }
+        });
+
+        btnConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                connect();
             }
         });
 
@@ -96,6 +112,11 @@ public class DeviceListActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    private void connect(){
+        mConnectThread = new BluetoothConnectThread(mBTDevice);
+        mConnectThread.start();
+    }
+
     private void scanForDevices() {
 
         if(mBluetoothAdapter.isDiscovering()){
@@ -109,8 +130,8 @@ public class DeviceListActivity extends AppCompatActivity {
                 mBTDevices.clear();
                 mDeviceListAdapter.notifyDataSetChanged();
             }
- /*           IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(mDiscoverReceiver, intentFilter); */
+            IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(mDiscoverReceiver, intentFilter);
         }
 
         if(!mBluetoothAdapter.isDiscovering()){
