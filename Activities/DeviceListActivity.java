@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -51,9 +52,6 @@ public class DeviceListActivity extends AppCompatActivity {
         discoverableIntent.putExtra(mBluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
         startActivity(discoverableIntent);
 
-        mAcceptThread = new BluetoothAcceptThread();
-        mAcceptThread.start();
-
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,8 +62,12 @@ public class DeviceListActivity extends AppCompatActivity {
         lvDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(), "You selected: " + mBTDevices.get(position)
+                .getName(), Toast.LENGTH_SHORT).show();
                 mBluetoothAdapter.cancelDiscovery();
                 mBTDevice = mBTDevices.get(position);
+                mAcceptThread = new BluetoothAcceptThread();
+                mAcceptThread.start();
 
 /*               Log.d(TAG, "onItemClick: You Clicked on a device");
                 String deviceName = mBTDevices.get(position).getName();
@@ -113,7 +115,7 @@ public class DeviceListActivity extends AppCompatActivity {
     }
 
     private void connect(){
-        mConnectThread = new BluetoothConnectThread(mBTDevice);
+        mConnectThread = new BluetoothConnectThread(this, mBTDevice);
         mConnectThread.start();
     }
 
