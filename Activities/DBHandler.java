@@ -29,6 +29,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_NAME = "name";
 
     public DBHandler(Context context) {
+
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     @Override
@@ -67,13 +68,14 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public Score getHighScore(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT MAX(" + KEY_SCORE + ") FROM " + TABLE_SCORE, null);
+    public String getHighScore(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT MAX(" + KEY_SCORE + "), " + KEY_NAME + " FROM " + TABLE_SCORE;
+        Cursor cursor = db.rawQuery(selectQuery, null);
         if(cursor != null){
             cursor.moveToFirst();
         }
-        Score score = new Score(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2));
+        String score = cursor.getString(0) + "     " + cursor.getString(1);
         return score;
     }
 
@@ -87,8 +89,8 @@ public class DBHandler extends SQLiteOpenHelper {
         return score;
     }
 
-    public List<Score> getAllScores(){
-        List<Score> scoreList = new ArrayList<Score>();
+    public List<String> getAllScores(){
+        List<String> scoreList = new ArrayList<String>();
 
         String selectQuery = "SELECT * FROM " + TABLE_SCORE;
 
@@ -97,12 +99,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()){
             do{
-                Score score = new Score();
-                score.setId(Integer.parseInt(cursor.getString(0)));
-                score.setScore(Integer.parseInt((cursor.getString(1))));
-                score.setName(cursor.getString(2));
 
-                scoreList.add(score);
+                scoreList.add(cursor.getString(1) + "    " + cursor.getString(2));
             } while(cursor.moveToNext());
         }
 

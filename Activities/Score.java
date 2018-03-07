@@ -20,6 +20,11 @@ public class Score {
         this.name = name;
     }
 
+    public Score(int score, String name){
+        this.score = score;
+        this.name = name;
+    }
+
     public Score(){
 
     }
