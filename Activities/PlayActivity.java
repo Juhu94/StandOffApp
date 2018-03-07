@@ -28,6 +28,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     private boolean accTrigger = false;
     private boolean sigTrigger = false;
     private boolean abortTrigger = false;
+    private boolean multiplayer = false;
+    private boolean playerTowReddy = false;
 
     private long timeReact;
     private long timeStart;
@@ -48,6 +50,9 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_play);
 
         context = this;
+
+        Intent intent = getIntent();
+        multiplayer = intent.getBooleanExtra("multiplayer", false);
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -85,10 +90,10 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void register(){
-        mSensorManager.registerListener((SensorEventListener) context, mSensorAcc, mSensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener((SensorEventListener) context, mSensorSig, mSensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener((SensorEventListener) context, mSensorGyro, mSensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener((SensorEventListener) context, mSensorProxy, mSensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener((SensorEventListener) context, mSensorAcc, mSensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener((SensorEventListener) context, mSensorSig, mSensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener((SensorEventListener) context, mSensorGyro, mSensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener((SensorEventListener) context, mSensorProxy, mSensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override
@@ -193,6 +198,17 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         startActivity(intent);
     }
 
+    public void multiplayerReddy(){ //TODO this function shall activate if you recive the "reddy" line
+        playerTowReddy = true;
+    }
+
+    public void multiplayerPlay(long timeStamp){    //TODO this function shall activate if you recive a time stamp
+        while (System.currentTimeMillis() < timeStamp){
+        }
+        startCoundown();
+        Toast.makeText(context, "Countdown started, Be ready", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
 
@@ -216,9 +232,19 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         if(event.sensor.getType() == mSensorProxy.getType()){
 
             if(event.values[0] < mSensorProxy.getMaximumRange() && !proxyTrigger) {
-                startCoundown();
-                Toast.makeText(context,"Countdown started, Be ready",Toast.LENGTH_SHORT).show();
-                abortTrigger = false;
+                if(!multiplayer) {
+                    startCoundown();
+                    Toast.makeText(context, "Countdown started, Be ready", Toast.LENGTH_SHORT).show();
+                    abortTrigger = false;
+
+                }else if(playerTowReddy && multiplayer) {
+                    long timeStamp = System.currentTimeMillis() + 5000;
+                    //TODO send "timeStamp" to player 2
+                    multiplayerPlay(timeStamp);
+                }else if (!playerTowReddy && multiplayer){
+                    //TODO send a "reddy" to player 2
+                    abortTrigger = false;
+                }
 
             }else if(event.values[0] > 0 && proxyTrigger && !abortTrigger) {
                 proxyTestStart();

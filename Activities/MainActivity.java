@@ -1,4 +1,4 @@
-package com.example.erikj.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, PlayActivity.class);
+                intent.putExtra("multiplayer", false);
                 startActivity(intent);
                 Log.d(TAG, ": PlayActivity");
             }
