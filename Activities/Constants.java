@@ -8,4 +8,6 @@ public interface Constants {
     public static final int MESSAGE_READ = 0;
     public static final int MESSAGE_WRITE = 1;
     public static final int MESSAGE_TOAST = 2;
+    public static final int CONNECTED_TRUE = 3;
+    public static final int CONNECTED_FALSE = 4;
 }

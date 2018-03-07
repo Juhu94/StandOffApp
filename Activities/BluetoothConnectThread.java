@@ -65,7 +65,14 @@ public class BluetoothConnectThread extends Thread {
     }
 
     private void connected() {
-        String CONNECTED = "hej";
+        int message = Constants.CONNECTED_TRUE;
+        mConnectedThread.write(message);
+
+        Log.d(TAG,"MESSAGE SENT....");
+        Intent intent = new Intent(context, PlayActivity.class);
+        context.startActivity(intent);
+
+     /*   String CONNECTED = "CONNECTED";
         byte[] bytes;
         try {
             bytes = CONNECTED.getBytes("UTF-8");
@@ -75,7 +82,7 @@ public class BluetoothConnectThread extends Thread {
         }
         Log.d(TAG,"MESSAGE SENT....");
         Intent intent = new Intent(context, PlayActivity.class);
-        context.startActivity(intent);
+        context.startActivity(intent); */
     }
 
     public void cancel () {

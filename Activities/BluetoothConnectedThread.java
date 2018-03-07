@@ -59,13 +59,11 @@ public class BluetoothConnectedThread extends Thread {
         while (true) {
             try {
                 // Read from the InputStream.
-                numBytes = mInputStream.read(mmBuffer);
-                String incMessage = new String(mmBuffer, 0, numBytes);
+                numBytes = mInputStream.read();
+              //  String incMessage = new String(mmBuffer, 0, numBytes);
                 Log.d(TAG, "MESSAGE RECEIVED....");
-                // Send the obtained bytes to the UI activity.
-             //   Message readMsg = mHandler.obtainMessage(Constants.MESSAGE_READ, numBytes, -1, mmBuffer);
-                messageHandler(incMessage);
-             //   readMsg.sendToTarget();
+                decodeMessage(numBytes);
+              //  messageHandler(incMessage);
             } catch (IOException e) {
                 Log.d(TAG, "Input stream was disconnected", e);
                 break;
@@ -78,6 +76,25 @@ public class BluetoothConnectedThread extends Thread {
             mOutputStream.write(bytes);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void write(int message){
+        try{
+            mOutputStream.write(message);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void decodeMessage(int message){
+        Log.d(TAG, String.valueOf(message));
+        switch (message){
+            case Constants.CONNECTED_TRUE:
+                Log.d(TAG, "Start PlayActivity....");
+                Intent intent = new Intent(context, PlayActivity.class);
+                context.startActivity(intent);
+                break;
         }
     }
 
