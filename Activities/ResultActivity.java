@@ -83,7 +83,7 @@ public class ResultActivity extends AppCompatActivity {
         btnSaveScore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(etName.getText().toString() != "") {
+                if(!etName.getText().toString().equals("")) {
                     score = new Score(totalPoints, etName.getText().toString());
 
                     dbHandler.addScore(score);
