@@ -4,9 +4,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 /**
@@ -56,9 +58,24 @@ public class BluetoothConnectThread extends Thread {
         }
 
         //TODO Ansluten, ny tråd ska skapas!
-        mConnectedThread = new BluetoothConnectedThread(mSocket);
+        mConnectedThread = new BluetoothConnectedThread(mSocket, context);
         mConnectedThread.start();
-        mConnectedThread.testMessage();
+        connected();
+     //   mConnectedThread.testMessage();
+    }
+
+    private void connected() {
+        String CONNECTED = "hej";
+        byte[] bytes;
+        try {
+            bytes = CONNECTED.getBytes("UTF-8");
+            mConnectedThread.write(bytes);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG,"MESSAGE SENT....");
+        Intent intent = new Intent(context, PlayActivity.class);
+        context.startActivity(intent);
     }
 
     public void cancel () {

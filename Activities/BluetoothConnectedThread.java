@@ -1,6 +1,8 @@
 package com.example.julia.sensor_standoffapp;
 
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,9 +27,11 @@ public class BluetoothConnectedThread extends Thread {
     private final InputStream mInputStream;
     private final OutputStream mOutputStream;
     private byte[] mmBuffer; // mmBuffer store for the stream
+    private Context context;
 
-    public BluetoothConnectedThread(BluetoothSocket socket) {
+    public BluetoothConnectedThread(BluetoothSocket socket, Context context) {
         mmSocket = socket;
+        this.context = context;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
 
@@ -48,18 +52,6 @@ public class BluetoothConnectedThread extends Thread {
         mOutputStream = tmpOut;
     }
 
-    /**
-     * Read och write är skriva som så att dem skickar tillbaka en "constant" till den aktiva
-     * activityn, där kollar man sedan genom en switch-sats vad man gjorde, t ex
-     * "Constant.MESSAGE_READ eller Constant.MESSAGE_WRITE"
-     * Detta behöver hanteras i den activityn som startar denna klassen. Vilken det ska vara eller
-     * hur vi ska lösa det vet jag inte än. Kanske ska ändra om read och write funktionerna i denna
-     * klassen istället.
-     *
-     * Den switch-satsen som behövs är ej implementerad för vet inte i vilken (kanske en ny)
-     * activity som ska den ska ligga i.
-     */
-
     public void run() {
         mmBuffer = new byte[1024];
         int numBytes; // bytes returned from read()
@@ -72,7 +64,7 @@ public class BluetoothConnectedThread extends Thread {
                 Log.d(TAG, "MESSAGE RECEIVED....");
                 // Send the obtained bytes to the UI activity.
              //   Message readMsg = mHandler.obtainMessage(Constants.MESSAGE_READ, numBytes, -1, mmBuffer);
-                showMessage(incMessage);
+                messageHandler(incMessage);
              //   readMsg.sendToTarget();
             } catch (IOException e) {
                 Log.d(TAG, "Input stream was disconnected", e);
@@ -86,6 +78,17 @@ public class BluetoothConnectedThread extends Thread {
             mOutputStream.write(bytes);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void messageHandler(String incMessage){
+        Log.d(TAG,"The message: " +incMessage);
+        switch (incMessage){
+            case "CONNECTED":
+                Log.d(TAG, "Start PlayActivity....");
+                Intent intent = new Intent(context, PlayActivity.class);
+                context.startActivity(intent);
+                break;
         }
     }
 

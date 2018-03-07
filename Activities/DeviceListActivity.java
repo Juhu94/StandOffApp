@@ -66,7 +66,8 @@ public class DeviceListActivity extends AppCompatActivity {
                 .getName(), Toast.LENGTH_SHORT).show();
                 mBluetoothAdapter.cancelDiscovery();
                 mBTDevice = mBTDevices.get(position);
-                mAcceptThread = new BluetoothAcceptThread();
+
+                mAcceptThread = new BluetoothAcceptThread(getApplicationContext());
                 mAcceptThread.start();
 
 /*               Log.d(TAG, "onItemClick: You Clicked on a device");
@@ -97,7 +98,6 @@ public class DeviceListActivity extends AppCompatActivity {
         registerReceiver(mBondingReceiver, filter);
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mDiscoverReceiver, intentFilter);
-
     }
 
     @Override
@@ -115,7 +115,7 @@ public class DeviceListActivity extends AppCompatActivity {
     }
 
     private void connect(){
-        mConnectThread = new BluetoothConnectThread(this, mBTDevice);
+        mConnectThread = new BluetoothConnectThread(getApplicationContext(), mBTDevice);
         mConnectThread.start();
     }
 

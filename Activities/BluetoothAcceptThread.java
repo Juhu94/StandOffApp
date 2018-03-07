@@ -3,6 +3,8 @@ package com.example.julia.sensor_standoffapp;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.io.IOException;
@@ -18,11 +20,13 @@ public class BluetoothAcceptThread extends Thread{
     private static final UUID MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     private BluetoothAdapter mBluetoothAdapter;
-
+    private BluetoothConnectedThread mConnectedThread;
     private final BluetoothServerSocket mmServerSocket;
+    private Context context;
 
-    public BluetoothAcceptThread(){
+    public BluetoothAcceptThread(Context context){
         Log.d(TAG,"AcceptThread running");
+        this.context = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         BluetoothServerSocket tmp = null;
@@ -50,6 +54,9 @@ public class BluetoothAcceptThread extends Thread{
 
             cancel();
         }
+
+        mConnectedThread = new BluetoothConnectedThread(socket, context);
+        mConnectedThread.start();
     }
 
     public void cancel() {
