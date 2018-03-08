@@ -29,7 +29,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     private boolean sigTrigger = false;
     private boolean abortTrigger = false;
     private boolean multiplayer = false;
-    private boolean playerTowReddy = false;
+    private boolean playerTwoReddy = false;
 
     private long timeReact;
     private long timeStart;
@@ -185,21 +185,25 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void printResults() {
-        Intent intent = new Intent(PlayActivity.this, ResultActivity.class); //New intent to start result activity
-        intent.putExtra("timeStart", timeStart);
-        intent.putExtra("timeEnd", timeEnd);
-        intent.putExtra("totalTime", timeEnd - timeStart);      //the draw time
-        intent.putExtra("reaction", timeStart - timeReact);    //the react time
+
         for (int i = 0; i < accAverage.size(); i++){               //calculates the average accuracy
             average += accAverage.get(i);
         }
         average = average/ accAverage.size();
-        intent.putExtra("accurate", average);   //the accuracy
+        Intent intent = new Intent(PlayActivity.this, ResultActivity.class); //New intent to start result activity
+        intent.putExtra("timeStart", timeStart);
+        intent.putExtra("timeEnd", timeEnd);
+        intent.putExtra("totalTime", timeEnd - timeStart);      //the draw time
+        intent.putExtra("reaction", timeStart - timeReact);     //the react time
+        intent.putExtra("accurate", average);                         //the accuracy
+        if(multiplayer){
+            //TODO Send "timeStart", "timeEnd", "timeReact", "average" to player 2
+        }
         startActivity(intent);
     }
 
     public void multiplayerReddy(){ //TODO this function shall activate if you recive the "reddy" line
-        playerTowReddy = true;
+        playerTwoReddy = true;
     }
 
     public void multiplayerPlay(long timeStamp){    //TODO this function shall activate if you recive a time stamp
@@ -237,11 +241,11 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                     Toast.makeText(context, "Countdown started, Be ready", Toast.LENGTH_SHORT).show();
                     abortTrigger = false;
 
-                }else if(playerTowReddy && multiplayer) {
+                }else if(playerTwoReddy && multiplayer) {
                     long timeStamp = System.currentTimeMillis() + 5000;
                     //TODO send "timeStamp" to player 2
                     multiplayerPlay(timeStamp);
-                }else if (!playerTowReddy && multiplayer){
+                }else if (!playerTwoReddy && multiplayer){
                     //TODO send a "reddy" to player 2
                     abortTrigger = false;
                 }

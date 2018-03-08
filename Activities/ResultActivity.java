@@ -1,4 +1,4 @@
-package com.example.erikj.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +18,12 @@ public class ResultActivity extends AppCompatActivity {
     private TextView tvAcc;
     private TextView tvResult;
     private EditText etName;
+    private TextView tvP2STime;
+    private TextView tvP2ETime;
+    private TextView tvP2Time;
+    private TextView tvP2React;
+    private TextView tvP2Acc;
+    private TextView tvWinOrLose;
 
     private DBHandler dbHandler;
 
@@ -31,6 +37,7 @@ public class ResultActivity extends AppCompatActivity {
     private Button btnSaveScore;
 
     private int totalPoints;
+    private int P2TotalPoints;
 
     private Score score;
 
@@ -48,6 +55,12 @@ public class ResultActivity extends AppCompatActivity {
         tvReact = (TextView) findViewById(R.id.tvReac);
         tvResult = (TextView) findViewById(R.id.tvResult);
         etName = (EditText) findViewById(R.id.etName);
+        tvP2STime = (TextView) findViewById(R.id.tvPlayerTwoStartTime);
+        tvP2ETime = (TextView) findViewById(R.id.tvPlayerTwoEndTime);
+        tvP2Time = (TextView) findViewById(R.id.tvPlayerTwoTotalTime);
+        tvP2React = (TextView) findViewById(R.id.tvPlayerTwoReac);
+        tvP2Acc = (TextView) findViewById(R.id.tvPlayerTwoAcc);
+        tvWinOrLose = (TextView) findViewById(R.id.tvWinOrLose);
 
         btnMenu = (Button) findViewById(R.id.btnMenu);
         btnSaveScore = (Button) findViewById(R.id.btnSaveScore);
@@ -95,6 +108,26 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void updatePlayerTwo(){ //TODO this function shall activate when you recive sTime eTime totalTime....
+        tvP2STime.setText("");  //TODO
+        tvP2ETime.setText("");  //TODO
+        tvP2Time.setText("");   //TODO
+        tvP2React.setText("");  //TODO
+        tvP2Acc.setText("");    //TODO
+
+        P2TotalPoints = (100 - (int)Math.abs(acc * 100));   //TODO
+        P2TotalPoints = (totalPoints + (375 - (int) react));//TODO
+        P2TotalPoints = (totalPoints + (375 - (int) time));//TODO
+
+        if (P2TotalPoints < totalPoints){
+            tvWinOrLose.setText(R.string.tvWin);
+        }if(P2TotalPoints > totalPoints){
+            tvWinOrLose.setText(R.string.tvLose);
+        }else{
+            tvWinOrLose.setText(R.string.tvDraw);
+        }
     }
 
     @Override
