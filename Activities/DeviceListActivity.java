@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.example.julian.sensor_standoffapp;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -78,7 +78,7 @@ public class DeviceListActivity extends AppCompatActivity {
                 Log.d(TAG, "onItemClick: deviceAddress = " +deviceAddress);
 
                 if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
-                    Log.d(TAG, "Trying to pait with " +deviceName);
+                    Log.d(TAG, "Trying to pair with " +deviceName);
         //            mBTDevices.get(position).createBond();
 
                     mBTDevice = mBTDevices.get(position);

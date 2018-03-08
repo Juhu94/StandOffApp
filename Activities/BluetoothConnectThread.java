@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.example.julian.sensor_standoffapp;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -58,34 +58,22 @@ public class BluetoothConnectThread extends Thread {
         }
 
         //TODO Ansluten, ny tråd ska skapas!
-        mConnectedThread = new BluetoothConnectedThread(mSocket, context);
+        mConnectedThread = new BluetoothConnectedThread(mSocket, context, false);
         mConnectedThread.start();
         connected();
-     //   mConnectedThread.testMessage();
     }
 
     private void connected() {
         int message = Constants.CONNECTED_TRUE;
         mConnectedThread.write(message);
 
-        Log.d(TAG,"MESSAGE SENT....");
+        Log.d(TAG, "MESSAGE SENT....");
         Intent intent = new Intent(context, PlayActivity.class);
+        intent.putExtra("multiplayer", true);
         context.startActivity(intent);
-
-     /*   String CONNECTED = "CONNECTED";
-        byte[] bytes;
-        try {
-            bytes = CONNECTED.getBytes("UTF-8");
-            mConnectedThread.write(bytes);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        Log.d(TAG,"MESSAGE SENT....");
-        Intent intent = new Intent(context, PlayActivity.class);
-        context.startActivity(intent); */
     }
 
-    public void cancel () {
+    public void cancel() {
         try{
             mSocket.close();
         }catch (IOException e){

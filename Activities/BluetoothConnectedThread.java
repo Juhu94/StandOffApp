@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.example.julian.sensor_standoffapp;
 
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -26,12 +26,14 @@ public class BluetoothConnectedThread extends Thread {
     private final BluetoothSocket mmSocket;
     private final InputStream mInputStream;
     private final OutputStream mOutputStream;
+    private boolean host = false;
     private byte[] mmBuffer; // mmBuffer store for the stream
     private Context context;
 
-    public BluetoothConnectedThread(BluetoothSocket socket, Context context) {
+    public BluetoothConnectedThread(BluetoothSocket socket, Context context, boolean host) {
         mmSocket = socket;
         this.context = context;
+        this.host = host;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
 
@@ -62,13 +64,17 @@ public class BluetoothConnectedThread extends Thread {
                 numBytes = mInputStream.read();
               //  String incMessage = new String(mmBuffer, 0, numBytes);
                 Log.d(TAG, "MESSAGE RECEIVED....");
-                decodeMessage(numBytes);
+                messageHandler(numBytes);
               //  messageHandler(incMessage);
             } catch (IOException e) {
                 Log.d(TAG, "Input stream was disconnected", e);
                 break;
             }
         }
+    }
+
+    public boolean getHostStatus(){
+        return this.host;
     }
 
     public void write(byte[] bytes) {
@@ -87,17 +93,18 @@ public class BluetoothConnectedThread extends Thread {
         }
     }
 
-    private void decodeMessage(int message){
+    private void messageHandler(int message){
         Log.d(TAG, String.valueOf(message));
         switch (message){
             case Constants.CONNECTED_TRUE:
                 Log.d(TAG, "Start PlayActivity....");
                 Intent intent = new Intent(context, PlayActivity.class);
+                intent.putExtra("multiplayer", true);
                 context.startActivity(intent);
                 break;
         }
     }
-
+/*
     private void messageHandler(String incMessage){
         Log.d(TAG,"The message: " +incMessage);
         switch (incMessage){
@@ -120,4 +127,5 @@ public class BluetoothConnectedThread extends Thread {
         byte[] buffer = new byte[1024];
         Log.d(TAG, "THE MESSAGE: " +incMessage);
     }
+    */
 }

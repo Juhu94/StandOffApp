@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.example.julian.sensor_standoffapp;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
@@ -55,7 +55,7 @@ public class BluetoothAcceptThread extends Thread{
             cancel();
         }
 
-        mConnectedThread = new BluetoothConnectedThread(socket, context);
+        mConnectedThread = new BluetoothConnectedThread(socket, context, true);
         mConnectedThread.start();
     }
 
