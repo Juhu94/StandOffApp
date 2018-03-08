@@ -8,11 +8,12 @@ import android.content.Intent;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 /**
- * Created by julia on 2018-03-06.
+ * Created by Julian on 2018-03-06.
  */
 
 public class BluetoothConnectThread extends Thread {
@@ -70,6 +71,7 @@ public class BluetoothConnectThread extends Thread {
         Log.d(TAG, "MESSAGE SENT....");
         Intent intent = new Intent(context, PlayActivity.class);
         intent.putExtra("multiplayer", true);
+        intent.putExtra("connectedThread", mConnectedThread);
         context.startActivity(intent);
     }
 

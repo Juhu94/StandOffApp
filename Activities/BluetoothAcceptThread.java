@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Created by julia on 2018-03-06.
+ * Created by Julian on 2018-03-06.
  */
 
 public class BluetoothAcceptThread extends Thread{

@@ -115,8 +115,13 @@ public class DeviceListActivity extends AppCompatActivity {
     }
 
     private void connect(){
-        mConnectThread = new BluetoothConnectThread(getApplicationContext(), mBTDevice);
-        mConnectThread.start();
+        if(mBTDevice != null) {
+            mConnectThread = new BluetoothConnectThread(getApplicationContext(), mBTDevice);
+            mConnectThread.start();
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Choose a device from the list", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void scanForDevices() {

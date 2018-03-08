@@ -11,14 +11,15 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**
- * Created by julia on 2018-03-06.
+ * Created by Julian§ on 2018-03-06.
  */
 
-public class BluetoothConnectedThread extends Thread {
+public class BluetoothConnectedThread extends Thread implements Serializable{
 
     private static final String TAG = "ConnectedThread";
     private Handler mHandler;
@@ -94,12 +95,13 @@ public class BluetoothConnectedThread extends Thread {
     }
 
     private void messageHandler(int message){
-        Log.d(TAG, String.valueOf(message));
+        Log.d(TAG, "MESSAGE RECEIVED....");
         switch (message){
             case Constants.CONNECTED_TRUE:
                 Log.d(TAG, "Start PlayActivity....");
                 Intent intent = new Intent(context, PlayActivity.class);
                 intent.putExtra("multiplayer", true);
+                intent.putExtra("connectedThread", this);
                 context.startActivity(intent);
                 break;
         }
