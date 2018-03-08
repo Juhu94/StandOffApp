@@ -40,13 +40,18 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
 
         // Get the input and output streams; using temp objects because
         // member streams are final.
+
         try {
-            tmpIn = socket.getInputStream();
+            if(mmSocket != null){
+                tmpIn = mmSocket.getInputStream();
+            }
         } catch (IOException e) {
             Log.e(TAG, "Error occurred when creating input stream", e);
         }
         try {
-            tmpOut = socket.getOutputStream();
+            if(mmSocket != null){
+                tmpOut = mmSocket.getOutputStream();
+            }
         } catch (IOException e) {
             Log.e(TAG, "Error occurred when creating output stream", e);
         }
@@ -67,8 +72,8 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
                 Log.d(TAG, "MESSAGE RECEIVED....");
                 messageHandler(numBytes);
               //  messageHandler(incMessage);
-            } catch (IOException e) {
-                Log.d(TAG, "Input stream was disconnected", e);
+            } catch (IOException | NullPointerException e) {
+                Log.e(TAG, "Input stream was disconnected", e);
                 break;
             }
         }
@@ -104,6 +109,16 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
                 intent.putExtra("connectedThread", this);
                 context.startActivity(intent);
                 break;
+        }
+    }
+
+    public void cancel() {
+        try {
+            mInputStream.close();
+            mOutputStream.close();
+            mmSocket.close();
+        } catch (IOException e) {
+            Log.e(TAG, "close() of connect socket failed", e);
         }
     }
 /*

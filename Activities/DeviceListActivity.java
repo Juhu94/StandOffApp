@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class DeviceListActivity extends AppCompatActivity {
+    private static final int REQUEST_ENABLE_BT = 1;
 
     private ListView lvDevices;
     private Button btnScan;
@@ -67,8 +68,7 @@ public class DeviceListActivity extends AppCompatActivity {
                 mBluetoothAdapter.cancelDiscovery();
                 mBTDevice = mBTDevices.get(position);
 
-                mAcceptThread = new BluetoothAcceptThread(getApplicationContext());
-                mAcceptThread.start();
+                startAcceptThread();
 
 /*               Log.d(TAG, "onItemClick: You Clicked on a device");
                 String deviceName = mBTDevices.get(position).getName();
@@ -102,6 +102,10 @@ public class DeviceListActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+      /*  if(!mBluetoothAdapter.isEnabled()){
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } */
         super.onResume();
     }
 
@@ -111,13 +115,34 @@ public class DeviceListActivity extends AppCompatActivity {
         mBluetoothAdapter.cancelDiscovery();
         unregisterReceiver(mDiscoverReceiver);
         unregisterReceiver(mBondingReceiver);
+        if(mAcceptThread != null){
+            mAcceptThread.cancel();
+            mAcceptThread = null;
+        }
+        if(mConnectThread != null){
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
         super.onDestroy();
     }
 
-    private void connect(){
+    private synchronized void startAcceptThread(){
+        if(mAcceptThread == null){
+            mAcceptThread = new BluetoothAcceptThread(this);
+            mAcceptThread.start();
+        }
+    }
+
+    private synchronized void connect(){
         if(mBTDevice != null) {
-            mConnectThread = new BluetoothConnectThread(getApplicationContext(), mBTDevice);
-            mConnectThread.start();
+            if(mConnectThread != null){
+                mConnectThread.cancel();
+                mConnectThread = null;
+            }
+            if(mConnectThread == null){
+                mConnectThread = new BluetoothConnectThread(this, mBTDevice);
+                mConnectThread.start();
+            }
         }
         else{
             Toast.makeText(getApplicationContext(), "Choose a device from the list", Toast.LENGTH_SHORT).show();

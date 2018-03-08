@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.julian.sensor_standoffapp;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "MainActivity";
-    private static final int REQUEST_ENABLE_BT = 1;
 
     private Button btnPlay;
     private Button btnHighscore;
@@ -84,10 +83,6 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             BTPresent = true;
-            if(!mBluetoothAdapter.isEnabled()){
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
         }
         super.onResume();
     }
