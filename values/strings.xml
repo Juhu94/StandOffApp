@@ -14,4 +14,7 @@
     <string name="tvInstructions">Place your phone beside your leg and wait for the vibration then draw.</string>
     <string name="btnSaveScore">Save score</string>
     <string name="etName">Enter name</string>
+    <string name="tvWin">You win!</string>
+    <string name="tvLose">You lose!</string>
+    <string name="tvDraw">Its a draw</string>
 </resources>
