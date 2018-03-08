@@ -1,6 +1,7 @@
 package com.example.julian.sensor_standoffapp;
 
 import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,9 +19,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class DeviceListActivity extends AppCompatActivity {
+public class DeviceListActivity extends AppCompatActivity implements Serializable{
     private static final int REQUEST_ENABLE_BT = 1;
 
     private ListView lvDevices;
@@ -155,7 +158,7 @@ public class DeviceListActivity extends AppCompatActivity {
             mBluetoothAdapter.cancelDiscovery();
             Log.d(TAG, "Canceling discovery");
 
-            checkBTPermissions();
+        //    checkBTPermissions();
 
             mBluetoothAdapter.startDiscovery();
             if(mBTDevices.size() > 0){
@@ -172,7 +175,7 @@ public class DeviceListActivity extends AppCompatActivity {
                 mDeviceListAdapter.notifyDataSetChanged();
             }
             Log.d(TAG, "Start discovery");
-            checkBTPermissions();
+          //  checkBTPermissions();
 
             mBluetoothAdapter.startDiscovery();
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -229,10 +232,10 @@ public class DeviceListActivity extends AppCompatActivity {
      *
      * NOTE: This will only execute on versions > LOLLIPOP because it is not needed otherwise.
      */
-    private void checkBTPermissions(){
+ /*   private void checkBTPermissions(){
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-            int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
-            permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+            int permissionCheck = ActivityCompat.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+            permissionCheck += ActivityCompat.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
             if(permissionCheck != 0){
                 this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
             }else{
@@ -240,4 +243,5 @@ public class DeviceListActivity extends AppCompatActivity {
             }
         }
     }
+    */
 }

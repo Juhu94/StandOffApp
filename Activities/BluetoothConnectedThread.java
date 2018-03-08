@@ -22,7 +22,6 @@ import java.nio.charset.Charset;
 public class BluetoothConnectedThread extends Thread implements Serializable{
 
     private static final String TAG = "ConnectedThread";
-    private Handler mHandler;
 
     private final BluetoothSocket mmSocket;
     private final InputStream mInputStream;
@@ -100,14 +99,13 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
     }
 
     private void messageHandler(int message){
-        Log.d(TAG, "MESSAGE RECEIVED....");
         switch (message){
             case Constants.CONNECTED_TRUE:
                 Log.d(TAG, "Start PlayActivity....");
                 Intent intent = new Intent(context, PlayActivity.class);
                 intent.putExtra("multiplayer", true);
-                intent.putExtra("connectedThread", this);
                 context.startActivity(intent);
+                PlayActivity.setConnectedThread(this);
                 break;
         }
     }
@@ -120,6 +118,10 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
         } catch (IOException e) {
             Log.e(TAG, "close() of connect socket failed", e);
         }
+    }
+
+    public void testLog(){
+        Log.d(TAG, "TEST: ANROPAT FRÅN PLAYACTIVITYN");
     }
 /*
     private void messageHandler(String incMessage){

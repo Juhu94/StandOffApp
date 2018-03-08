@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.io.IOException;
@@ -71,8 +72,8 @@ public class BluetoothConnectThread extends Thread {
         Log.d(TAG, "MESSAGE SENT....");
         Intent intent = new Intent(context, PlayActivity.class);
         intent.putExtra("multiplayer", true);
-        intent.putExtra("connectedThread", mConnectedThread);
         context.startActivity(intent);
+        PlayActivity.setConnectedThread(mConnectedThread);
     }
 
     public void cancel() {

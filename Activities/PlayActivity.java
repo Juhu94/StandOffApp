@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.julian.sensor_standoffapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +43,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 
     private CountDownTimer countDownTimer;
     private Vibrator vibrator;
+    private static BluetoothConnectedThread mConnectedThread;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,6 +259,11 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                 abortTrigger = true;
             }
         }
+    }
+
+    public static void setConnectedThread(BluetoothConnectedThread thread){
+        mConnectedThread = thread;
+        mConnectedThread.testLog();
     }
 
     @Override
