@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.julia.sensor_standoffapp.DeviceListActivity">
+    tools:context="com.example.julian.sensor_standoffapp.DeviceListActivity">
 
     <TextView
         android:id="@+id/textView"
@@ -56,6 +56,7 @@
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:backgroundTint="@android:color/holo_green_light"
         android:text="Connect"
         app:layout_constraintBottom_toTopOf="@+id/btnScan"
         app:layout_constraintLeft_toLeftOf="parent"
