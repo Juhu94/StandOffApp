@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mah.simon.standoffapp.PlayActivity">
+    tools:context="com.example.erikj.sensor_standoffapp.PlayActivity">
 
     <TextView
         android:id="@+id/tvInstructions"
