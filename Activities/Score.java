@@ -13,6 +13,7 @@ public class Score {
     int id;
     int score;
     String name;
+    String date;
 
     public Score(int id, int score, String name){
         this.id = id;
@@ -20,9 +21,10 @@ public class Score {
         this.name = name;
     }
 
-    public Score(int score, String name){
+    public Score(int score, String name, String date){
         this.score = score;
         this.name = name;
+        this.date = date;
     }
 
     public Score(){
@@ -41,6 +43,10 @@ public class Score {
 
     public int getScore(){
         return this.score;
+    }
+
+    public String getDate(){
+        return this.date;
     }
 
     public void setScore(int score){

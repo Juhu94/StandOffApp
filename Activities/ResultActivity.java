@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.erikj.sensor_standoffapp;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -64,7 +66,8 @@ public class ResultActivity extends AppCompatActivity {
 
         btnMenu = (Button) findViewById(R.id.btnMenu);
         btnSaveScore = (Button) findViewById(R.id.btnSaveScore);
-
+        btnSaveScore.setEnabled(true);
+        etName.setEnabled(true);
 
         Intent intent = getIntent();
 
@@ -97,10 +100,16 @@ public class ResultActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!etName.getText().toString().equals("")) {
-                    score = new Score(totalPoints, etName.getText().toString());
+
+                    String cal = Calendar.getInstance().getTime().toString();
+                    String date = cal.substring(3, 16) + " " + cal.substring(29);
+
+                    score = new Score(totalPoints, etName.getText().toString(), date);
 
                     dbHandler.addScore(score);
-
+                    btnSaveScore.setEnabled(false);
+                    etName.setEnabled(false);
+                    Toast.makeText(context, "Score saved!", Toast.LENGTH_SHORT).show();
 
                 } else{
                     Toast.makeText(context, "You must enter a name if you want to save your score.", Toast.LENGTH_LONG).show();
@@ -110,7 +119,7 @@ public class ResultActivity extends AppCompatActivity {
 
     }
 
-    public void updatePlayerTwo(){ //TODO this function shall activate when you recive sTime eTime totalTime....
+    public void updatePlayerTwo(){ //TODO this function shall activate when you receive sTime eTime totalTime....
         tvP2STime.setText("");  //TODO
         tvP2ETime.setText("");  //TODO
         tvP2Time.setText("");   //TODO

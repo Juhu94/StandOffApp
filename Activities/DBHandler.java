@@ -27,6 +27,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_ID = "id";
     private static final String KEY_SCORE = "score";
     private static final String KEY_NAME = "name";
+    private static final String KEY_DATE = "date";
 
     public DBHandler(Context context) {
 
@@ -36,7 +37,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_SCORE + "("
         + KEY_ID + " INTEGER PRIMARY KEY," + KEY_SCORE + " TEXT,"
-        + KEY_NAME + " TEXT" + ")";
+        + KEY_NAME + " TEXT," + KEY_DATE + " TEXT" + ")";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
     @Override
@@ -63,6 +64,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         values.put(KEY_SCORE, score.getScore());
         values.put(KEY_NAME, score.getName());
+        values.put(KEY_DATE, score.getDate());
+        values.put(KEY_ID, getNumOfScores());
 
         db.insert(TABLE_SCORE, null, values);
         db.close();
@@ -70,29 +73,20 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public String getHighScore(){
         SQLiteDatabase db = this.getWritableDatabase();
-        String selectQuery = "SELECT MAX(" + KEY_SCORE + "), " + KEY_NAME + " FROM " + TABLE_SCORE;
+        String selectQuery = "SELECT MAX(" + KEY_SCORE + "), " + KEY_NAME + ", " + KEY_DATE + " FROM " + TABLE_SCORE;
         Cursor cursor = db.rawQuery(selectQuery, null);
         if(cursor != null){
             cursor.moveToFirst();
         }
-        String score = cursor.getString(0) + "     " + cursor.getString(1);
+        String score = cursor.getString(0) + " | " + cursor.getString(1) + " | " + cursor.getString(2);
         return score;
     }
 
-    public Score getScore(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_SCORE, new String[] {KEY_ID, KEY_SCORE, KEY_NAME}, KEY_ID + "=?", new String[] {String.valueOf(id)}, null, null, null, null);
-        if(cursor != null){
-            cursor.moveToFirst();
-        }
-        Score score = new Score(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), cursor.getString(2));
-        return score;
-    }
 
     public List<String> getAllScores(){
         List<String> scoreList = new ArrayList<String>();
 
-        String selectQuery = "SELECT * FROM " + TABLE_SCORE;
+        String selectQuery = "SELECT * FROM " + TABLE_SCORE + " ORDER BY " + KEY_ID + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -100,7 +94,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(cursor.moveToFirst()){
             do{
 
-                scoreList.add(cursor.getString(1) + "    " + cursor.getString(2));
+                scoreList.add(cursor.getString(1) + " | " + cursor.getString(2) + " | " + cursor.getString(3));
             } while(cursor.moveToNext());
         }
 
@@ -111,9 +105,10 @@ public class DBHandler extends SQLiteOpenHelper {
         String countQuery = "SELECT * FROM " + TABLE_SCORE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        int num = cursor.getCount();
         cursor.close();
 
-        return cursor.getCount();
+        return num;
     }
 
     public void deleteScore(Score score){
