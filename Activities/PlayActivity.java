@@ -31,6 +31,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     private boolean sigTrigger = false;
     private boolean abortTrigger = false;
     private boolean multiplayer = false;
+    private boolean proxyNewRead;
 
     private long timeStamp;
     private long timeReact;
@@ -54,6 +55,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_play);
 
         context = this;
+        
+        proxyNewRead = true;
 
         Intent intent = getIntent();
         multiplayer = intent.getBooleanExtra("multiplayer", false);
@@ -124,6 +127,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     public void startGame(){
         if(!abortTrigger) {
             timeReact = System.currentTimeMillis();
+            proxyNewRead = true;
             proxyTrigger = true;
             vibrator.vibrate(500);
         }else {
@@ -256,15 +260,17 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 
         if(event.sensor.getType() == mSensorProxy.getType()){
 
-            if(event.values[0] < mSensorProxy.getMaximumRange() && !proxyTrigger) {
+            if(event.values[0] < mSensorProxy.getMaximumRange() && !proxyTrigger && proxyNewRead) {
                 if(!multiplayer) {
                     startCoundown();
                     Toast.makeText(context, "Countdown started, Be ready", Toast.LENGTH_SHORT).show();
                     abortTrigger = false;
+                    proxyNewRead = false;
 
                 }else if(multiplayer && (System.currentTimeMillis() > (timeStamp - 1000))) {
                     startCoundown(1);
                     abortTrigger = false;
+                    
                 }else if(multiplayer && (System.currentTimeMillis() > timeStamp)){
                     abortTrigger = true;
                     startCoundown(1);
@@ -272,6 +278,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 
             }else if(event.values[0] > 0 && proxyTrigger && !abortTrigger) {
                 proxyTestStart();
+                proxyNewRead = false;
 
             }else if(event.values[0] > 0) {
                 abortTrigger = true;
