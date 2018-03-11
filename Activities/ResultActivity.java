@@ -1,4 +1,4 @@
-package com.example.erikj.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +34,9 @@ public class ResultActivity extends AppCompatActivity {
     private long time;
     private long react;
     private double acc;
+    private long p2time;
+    private long p2react;
+    private double p2acc;
 
     private Button btnMenu;
     private Button btnSaveScore;
@@ -83,6 +86,10 @@ public class ResultActivity extends AppCompatActivity {
         tvReact.setText(Long.toString(react));
         tvAcc.setText(Double.toString(acc));
 
+        if (intent.getBooleanExtra("multiplayer", false)){
+            updatePlayerTwo(intent);
+        }
+
         btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,16 +126,20 @@ public class ResultActivity extends AppCompatActivity {
 
     }
 
-    public void updatePlayerTwo(){ //TODO this function shall activate when you receive sTime eTime totalTime....
-        tvP2STime.setText("");  //TODO
-        tvP2ETime.setText("");  //TODO
-        tvP2Time.setText("");   //TODO
-        tvP2React.setText("");  //TODO
-        tvP2Acc.setText("");    //TODO
+    public void updatePlayerTwo(Intent intent){
+        p2time = intent.getLongExtra("p2timeEnd", 0) - intent.getLongExtra("p2timeStart", 0);
+        p2react = intent.getLongExtra("p2timeStart", 0) - intent.getLongExtra("p2reaction", 0);
+        p2acc = intent.getDoubleExtra("p2accurate", 0);
 
-        P2TotalPoints = (100 - (int)Math.abs(acc * 100));   //TODO
-        P2TotalPoints = (totalPoints + (375 - (int) react));//TODO
-        P2TotalPoints = (totalPoints + (375 - (int) time));//TODO
+        tvP2STime.setText(Long.toString(intent.getLongExtra("p2timeStart", 0)));
+        tvP2ETime.setText(Long.toString(intent.getLongExtra("p2timeEnd", 0)));
+        tvP2Time.setText(Long.toString(p2time));
+        tvP2React.setText(Long.toString(p2react));
+        tvP2Acc.setText(Double.toString(p2acc));
+
+        P2TotalPoints = (100 - (int)Math.abs(p2acc * 100));
+        P2TotalPoints = (totalPoints + (375 - (int) p2react));
+        P2TotalPoints = (totalPoints + (375 - (int) p2time));
 
         if (P2TotalPoints < totalPoints){
             tvWinOrLose.setText(R.string.tvWin);

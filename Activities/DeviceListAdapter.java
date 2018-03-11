@@ -1,4 +1,4 @@
-package com.example.erikj.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.example.erikj.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -29,6 +29,13 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
     private boolean host = false;
     private byte[] mmBuffer; // mmBuffer store for the stream
     private Context context;
+
+    private boolean dataIn = false;
+
+    private long sTime = 0;
+    private long eTime = 0;
+    private long rTime = 0;
+    private double avreage = 0;
 
     public BluetoothConnectedThread(BluetoothSocket socket, Context context, boolean host) {
         mmSocket = socket;
@@ -98,16 +105,54 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
         }
     }
 
+    public void write(String str){
+        try {
+            write(str.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void messageHandler(int message){
         switch (message){
             case Constants.CONNECTED_TRUE:
                 Log.d(TAG, "Start PlayActivity....");
                 Intent intent = new Intent(context, PlayActivity.class);
                 intent.putExtra("multiplayer", true);
+                intent.putExtra("timeStamp", System.currentTimeMillis() + 10000);
                 context.startActivity(intent);
                 PlayActivity.setConnectedThread(this);
                 break;
+            default:    //handels the data when it arrives
+                if (sTime == 0){
+                    sTime = message;
+                }else if(eTime == 0){
+                    eTime = message;
+                }else if(rTime == 0){
+                    rTime = message;
+                }else if (avreage == 0){
+                    avreage = message;
+                    dataIn = true;
+                }
+                break;
+
         }
+    }
+
+    public Boolean getData(){ //to check if p2 data is available
+        return dataIn;
+    }
+    public long getSTime(){ //to get start time
+        return sTime;
+    }
+    public long getETime(){ //to get end time
+        return eTime;
+    }
+    public long getRTime(){ //to get react time
+        return rTime;
+    }
+    public double getAvreage(){ //to get the avrage of p2s aim
+        return avreage;
     }
 
     public void cancel() {

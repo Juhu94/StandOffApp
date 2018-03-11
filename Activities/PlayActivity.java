@@ -1,4 +1,4 @@
-package com.example.erikj.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,14 +23,16 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     private double average;
     private LinkedList<Float> accAverage = new LinkedList<Float>();
 
+    private BluetoothConnectedThread bluetoothConnectedThread;
+
     private boolean gyroTrigger = false;
     private boolean proxyTrigger = false;
     private boolean accTrigger = false;
     private boolean sigTrigger = false;
     private boolean abortTrigger = false;
     private boolean multiplayer = false;
-    private boolean playerTwoReddy = false;
 
+    private long timeStamp;
     private long timeReact;
     private long timeStart;
     private long timeEnd;
@@ -55,6 +57,9 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 
         Intent intent = getIntent();
         multiplayer = intent.getBooleanExtra("multiplayer", false);
+        if (multiplayer){
+            timeStamp = intent.getLongExtra("timeStamp", 0);
+        }
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -172,9 +177,9 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         },200);
     }*/
 
-    private void startCoundown() {
+    private void startCoundown(int sec) {
 
-        countDownTimer = new CountDownTimer(3 * 1000, 1000) {
+        countDownTimer = new CountDownTimer(sec * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {}
             @Override
@@ -186,7 +191,20 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         countDownTimer.start();
     }
 
+    private void startCoundown(){   //TODO change to random
+        startCoundown(3);
+    }
+
+    private void sendData(){
+        bluetoothConnectedThread.write((int)timeStart);
+        bluetoothConnectedThread.write((int)timeEnd);
+        bluetoothConnectedThread.write((int)timeReact);
+        bluetoothConnectedThread.write(Double.toString(average));
+    }
+
     private void printResults() {
+
+        sendData();
 
         for (int i = 0; i < accAverage.size(); i++){               //calculates the average accuracy
             average += accAverage.get(i);
@@ -199,21 +217,22 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         intent.putExtra("reaction", timeStart - timeReact);     //the react time
         intent.putExtra("accurate", average);                         //the accuracy
         if(multiplayer){
-            //TODO Send "timeStart", "timeEnd", "timeReact", "average" to player 2
+           while (!bluetoothConnectedThread.getData()){
+               try {
+                   wait(500);
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+           }
+           intent.putExtra("multiplayer", true);
+           intent.putExtra("p2timeStart",bluetoothConnectedThread.getSTime());
+           intent.putExtra("p2timeEnd",bluetoothConnectedThread.getETime());
+           intent.putExtra("p2reaction",bluetoothConnectedThread.getRTime());
+           intent.putExtra("p2accurate",bluetoothConnectedThread.getAvreage());
         }
         startActivity(intent);
     }
 
-    public void multiplayerReddy(){ //TODO this function shall activate if you recive the "reddy" line
-        playerTwoReddy = true;
-    }
-
-    public void multiplayerPlay(long timeStamp){    //TODO this function shall activate if you recive a time stamp
-        while (System.currentTimeMillis() < timeStamp){
-        }
-        startCoundown();
-        Toast.makeText(context, "Countdown started, Be ready", Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -243,13 +262,12 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                     Toast.makeText(context, "Countdown started, Be ready", Toast.LENGTH_SHORT).show();
                     abortTrigger = false;
 
-                }else if(playerTwoReddy && multiplayer) {
-                    long timeStamp = System.currentTimeMillis() + 5000;
-                    //TODO send "timeStamp" to player 2
-                    multiplayerPlay(timeStamp);
-                }else if (!playerTwoReddy && multiplayer){
-                    //TODO send a "reddy" to player 2
+                }else if(multiplayer && (System.currentTimeMillis() > (timeStamp - 1000))) {
+                    startCoundown(1);
                     abortTrigger = false;
+                }else if(multiplayer && (System.currentTimeMillis() > timeStamp)){
+                    abortTrigger = true;
+                    startCoundown(1);
                 }
 
             }else if(event.values[0] > 0 && proxyTrigger && !abortTrigger) {
