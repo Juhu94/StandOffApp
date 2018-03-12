@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 /**
  * Created by julia on 2018-03-06.

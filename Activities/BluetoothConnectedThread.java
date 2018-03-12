@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -32,10 +32,7 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
 
     private boolean dataIn = false;
 
-    private long sTime = 0;
-    private long eTime = 0;
-    private long rTime = 0;
-    private double avreage = 0;
+    private int P2Points = 0;
 
     public BluetoothConnectedThread(BluetoothSocket socket, Context context, boolean host) {
         mmSocket = socket;
@@ -75,7 +72,7 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
                 // Read from the InputStream.
                 numBytes = mInputStream.read();
               //  String incMessage = new String(mmBuffer, 0, numBytes);
-                Log.d(TAG, "MESSAGE RECEIVED....");
+                Log.d(TAG, "MESSAGE RECEIVED...." +numBytes);
                 messageHandler(numBytes);
               //  messageHandler(incMessage);
             } catch (IOException | NullPointerException e) {
@@ -91,7 +88,9 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
 
     public void write(byte[] bytes) {
         try {
+            dataIn =false; // <--- tabort?
             mOutputStream.write(bytes);
+            mOutputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,7 +98,9 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
 
     public void write(int message){
         try{
+            Log.d(TAG, "Skickar: " +message);
             mOutputStream.write(message);
+            mOutputStream.flush();
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -114,45 +115,35 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
     }
 
     private void messageHandler(int message){
+        Log.d(TAG, Integer.toString(message));
         switch (message){
             case Constants.CONNECTED_TRUE:
                 Log.d(TAG, "Start PlayActivity....");
                 Intent intent = new Intent(context, PlayActivity.class);
                 intent.putExtra("multiplayer", true);
-                intent.putExtra("timeStamp", System.currentTimeMillis() + 10000);
+                intent.putExtra("timeStamp", System.currentTimeMillis() + 5000);
                 context.startActivity(intent);
                 PlayActivity.setConnectedThread(this);
                 break;
             default:    //handels the data when it arrives
-                if (sTime == 0){
-                    sTime = message;
-                }else if(eTime == 0){
-                    eTime = message;
-                }else if(rTime == 0){
-                    rTime = message;
-                }else if (avreage == 0){
-                    avreage = message;
+                if (!dataIn){
+                    P2Points = message;
                     dataIn = true;
+                    Log.d(TAG, "Player 2 points: " + message);
                 }
                 break;
-
         }
+    }
+
+    public void setDataBool(boolean tOrf){
+        dataIn = tOrf;
     }
 
     public Boolean getData(){ //to check if p2 data is available
         return dataIn;
     }
-    public long getSTime(){ //to get start time
-        return sTime;
-    }
-    public long getETime(){ //to get end time
-        return eTime;
-    }
-    public long getRTime(){ //to get react time
-        return rTime;
-    }
-    public double getAvreage(){ //to get the avrage of p2s aim
-        return avreage;
+    public int getP2Points() { //to get player 2 points
+        return P2Points;
     }
 
     public void cancel() {

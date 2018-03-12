@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;

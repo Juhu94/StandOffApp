@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -68,11 +68,10 @@ public class BluetoothConnectThread extends Thread {
     private void connected() {
         int message = Constants.CONNECTED_TRUE;
         mConnectedThread.write(message);
-
         Log.d(TAG, "MESSAGE SENT....");
         Intent intent = new Intent(context, PlayActivity.class);
         intent.putExtra("multiplayer", true);
-        intent.putExtra("timeStamp", System.currentTimeMillis() + 10000);
+        intent.putExtra("timeStamp", System.currentTimeMillis() + 5000);
         context.startActivity(intent);
         PlayActivity.setConnectedThread(mConnectedThread);
     }

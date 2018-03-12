@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,18 +12,18 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.LinkedList;
 
 public class PlayActivity extends AppCompatActivity implements SensorEventListener{
+    private static final String TAG = "PlayActivity";
 
     private Context context;
 
     private double average;
     private LinkedList<Float> accAverage = new LinkedList<Float>();
-
-    private BluetoothConnectedThread bluetoothConnectedThread;
 
     private boolean gyroTrigger = false;
     private boolean proxyTrigger = false;
@@ -62,6 +62,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         multiplayer = intent.getBooleanExtra("multiplayer", false);
         if (multiplayer){
             timeStamp = intent.getLongExtra("timeStamp", 0);
+            startCoundown((int)((timeStamp - System.currentTimeMillis())/1000));
         }
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -200,15 +201,19 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void sendData(){
-        bluetoothConnectedThread.write((int)timeStart);
-        bluetoothConnectedThread.write((int)timeEnd);
-        bluetoothConnectedThread.write((int)timeReact);
-        bluetoothConnectedThread.write(Double.toString(average));
+        Log.d(TAG, timeStart + "\n" + timeEnd + "\n" + timeReact + "\n" + average);
+        if(mConnectedThread != null) {
+            int totalPoints = (100 - (int)Math.abs(average * 100));
+            totalPoints = (totalPoints + (375 - (int) (timeStart - timeReact)));
+            totalPoints = (totalPoints + (375 - (int) (timeEnd - timeStart)));
+            Log.d(TAG, "Total points: " +totalPoints);
+            mConnectedThread.write(totalPoints);
+        }else{
+            Log.d(TAG,"Av någon anledning är bluetoothConnectedThread null");
+        }
     }
 
     private void printResults() {
-
-        sendData();
 
         for (int i = 0; i < accAverage.size(); i++){               //calculates the average accuracy
             average += accAverage.get(i);
@@ -221,18 +226,15 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         intent.putExtra("reaction", timeStart - timeReact);     //the react time
         intent.putExtra("accurate", average);                         //the accuracy
         if(multiplayer){
-           while (!bluetoothConnectedThread.getData()){
-               try {
-                   wait(500);
-               } catch (InterruptedException e) {
-                   e.printStackTrace();
-               }
+           // mConnectedThread.setDataBool(false);
+            sendData();
+            Long myWhait = System.currentTimeMillis() + 5000;
+           while (!mConnectedThread.getData() && (System.currentTimeMillis() > myWhait)){
+
            }
            intent.putExtra("multiplayer", true);
-           intent.putExtra("p2timeStart",bluetoothConnectedThread.getSTime());
-           intent.putExtra("p2timeEnd",bluetoothConnectedThread.getETime());
-           intent.putExtra("p2reaction",bluetoothConnectedThread.getRTime());
-           intent.putExtra("p2accurate",bluetoothConnectedThread.getAvreage());
+           intent.putExtra("totalPoints", mConnectedThread.getP2Points());
+            Log.d(TAG, "DATA framme hämtar data " + mConnectedThread.getP2Points());
         }
         startActivity(intent);
     }
@@ -259,7 +261,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         }
 
         if(event.sensor.getType() == mSensorProxy.getType()){
-
+            Log.e(TAG, "current time: " + System.currentTimeMillis() + " timestamp: " + timeStamp);
             if(event.values[0] < mSensorProxy.getMaximumRange() && !proxyTrigger && proxyNewRead) {
                 if(!multiplayer) {
                     startCoundown();
@@ -267,13 +269,9 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                     abortTrigger = false;
                     proxyNewRead = false;
 
-                }else if(multiplayer && (System.currentTimeMillis() > (timeStamp - 1000))) {
-                    startCoundown(1);
+                }else{
                     abortTrigger = false;
-                    
-                }else if(multiplayer && (System.currentTimeMillis() > timeStamp)){
-                    abortTrigger = true;
-                    startCoundown(1);
+                    proxyNewRead = false;
                 }
 
             }else if(event.values[0] > 0 && proxyTrigger && !abortTrigger) {

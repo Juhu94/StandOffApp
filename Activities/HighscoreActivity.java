@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

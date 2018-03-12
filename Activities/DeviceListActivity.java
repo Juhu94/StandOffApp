@@ -1,4 +1,4 @@
-package com.mah.simon.standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 import android.Manifest;
 import android.app.Activity;
@@ -158,7 +158,7 @@ public class DeviceListActivity extends AppCompatActivity implements Serializabl
             mBluetoothAdapter.cancelDiscovery();
             Log.d(TAG, "Canceling discovery");
 
-        //    checkBTPermissions();
+            checkBTPermissions();
 
             mBluetoothAdapter.startDiscovery();
             if(mBTDevices.size() > 0){
@@ -175,7 +175,7 @@ public class DeviceListActivity extends AppCompatActivity implements Serializabl
                 mDeviceListAdapter.notifyDataSetChanged();
             }
             Log.d(TAG, "Start discovery");
-          //  checkBTPermissions();
+            checkBTPermissions();
 
             mBluetoothAdapter.startDiscovery();
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -232,10 +232,10 @@ public class DeviceListActivity extends AppCompatActivity implements Serializabl
      *
      * NOTE: This will only execute on versions > LOLLIPOP because it is not needed otherwise.
      */
- /*   private void checkBTPermissions(){
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-            int permissionCheck = ActivityCompat.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-            permissionCheck += ActivityCompat.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+    private void checkBTPermissions(){
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1){
+            int permissionCheck = this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+            permissionCheck += this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
             if(permissionCheck != 0){
                 this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
             }else{
@@ -243,5 +243,5 @@ public class DeviceListActivity extends AppCompatActivity implements Serializabl
             }
         }
     }
-    */
+
 }
