@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.example.julian.sensor_standoffapp;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +37,7 @@ public class ResultActivity extends AppCompatActivity {
 
     private int totalPoints;
     private int P2TotalPoints;
+    private int finalResult;
 
     private Score score;
 
@@ -117,7 +118,22 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void updatePlayerTwo(Intent intent){
-        P2TotalPoints = intent.getIntExtra("totalPoints", 10);
+        Log.d("UPDATEPLAYERTWO", "KOMMER JAG HIT?");
+        //int opponentsPoints = intent.getIntExtra("opponentsPoints", 0);
+        int result = intent.getIntExtra("finalResult", 0);
+        //tvPlayerTwoPoints.setText(opponentsPoints);
+        switch (result){
+            case Constants.YOU_WON:
+                tvWinOrLose.setText("YOU WIN!");
+                break;
+            case Constants.YOU_LOST:
+                tvWinOrLose.setText("YOU LOSE!");
+                break;
+            case Constants.DRAW:
+                tvWinOrLose.setText("IT'S A DRAW!");
+                break;
+        }
+        /* P2TotalPoints = intent.getIntExtra("totalPoints", 10);
         tvPlayerTwoPoints.setText(Integer.toString(P2TotalPoints));
 
         if (P2TotalPoints < totalPoints){
@@ -127,6 +143,7 @@ public class ResultActivity extends AppCompatActivity {
         }else if(P2TotalPoints == totalPoints){
             tvWinOrLose.setText(R.string.tvDraw);
         }
+        */
     }
 
     @Override

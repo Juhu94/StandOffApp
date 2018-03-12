@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.example.julian.sensor_standoffapp;
 
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -38,6 +38,7 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
         mmSocket = socket;
         this.context = context;
         this.host = host;
+        Log.d(TAG, "I AM HOST: " +this.host);
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
 
@@ -116,7 +117,23 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
 
     private void messageHandler(int message){
         Log.d(TAG, Integer.toString(message));
-        switch (message){
+        if(message == Constants.CONNECTED_TRUE){
+            Log.d(TAG, "Start PlayActivity....");
+            Intent intent = new Intent(context, PlayActivity.class);
+            intent.putExtra("multiplayer", true);
+            intent.putExtra("timeStamp", System.currentTimeMillis() + 5000);
+            context.startActivity(intent);
+            PlayActivity.setConnectedThread(this);
+        }else{
+            if(host){
+                P2Points = message;
+                PlayActivity.setOpponentsPoints(P2Points);
+            }else if(!host){
+                PlayActivity.setFinalResult(message);
+            }
+
+        }
+       /* switch (message){
             case Constants.CONNECTED_TRUE:
                 Log.d(TAG, "Start PlayActivity....");
                 Intent intent = new Intent(context, PlayActivity.class);
@@ -132,7 +149,7 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
                     Log.d(TAG, "Player 2 points: " + message);
                 }
                 break;
-        }
+        }*/
     }
 
     public void setDataBool(boolean tOrf){
