@@ -4,21 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.julia.sensor_standoffapp.HelpActivity">
+    tools:context="com.example.erikj.sensor_standoffapp.HelpActivity">
 
-    <com.example.julia.sensor_standoffapp.GifImageView
-        android:id="@+id/GifImageView"
-        android:layout_width="wrap_content"
+    <WebView
+        android:id="@+id/wvGifHelp"
+        android:layout_width="185dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/svHelpInstructions"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        android:layout_marginRight="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/svHelpInstructions"
@@ -40,4 +36,5 @@
             android:text="@string/tvHelpInstructions" />
 
     </ScrollView>
+
 </android.support.constraint.ConstraintLayout>
