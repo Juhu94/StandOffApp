@@ -1,4 +1,4 @@
-package com.example.julian.sensor_standoffapp;
+package com.example.erikj.sensor_standoffapp;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -21,8 +21,10 @@ public class ResultActivity extends AppCompatActivity {
     private TextView tvAcc;
     private TextView tvResult;
     private TextView tvPlayerTwoPoints;
+    private TextView tvOppPoints;
     private EditText etName;
     private TextView tvWinOrLose;
+
 
     private DBHandler dbHandler;
 
@@ -57,6 +59,7 @@ public class ResultActivity extends AppCompatActivity {
         etName = (EditText) findViewById(R.id.etName);
         tvWinOrLose = (TextView) findViewById(R.id.tvWinOrLose);
         tvPlayerTwoPoints = (TextView) findViewById(R.id.tvPlayerTwoPoints);
+        tvOppPoints = (TextView) findViewById(R.id.tvOppPoints);
 
         btnMenu = (Button) findViewById(R.id.btnMenu);
         btnSaveScore = (Button) findViewById(R.id.btnSaveScore);
@@ -79,6 +82,8 @@ public class ResultActivity extends AppCompatActivity {
 
         if (intent.getBooleanExtra("multiplayer", false)){
             updatePlayerTwo(intent);
+        } else{
+            tvOppPoints.setVisibility(View.INVISIBLE);
         }
 
         btnMenu.setOnClickListener(new View.OnClickListener() {

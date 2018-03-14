@@ -1,10 +1,9 @@
-package com.example.julia.sensor_standoffapp;
+package com.example.erikj.sensor_standoffapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.webkit.WebView;
 
-import java.util.Calendar;
 
 public class HelpActivity extends AppCompatActivity {
 
@@ -13,8 +12,8 @@ public class HelpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
 
-        GifImageView gifImageView = (GifImageView) findViewById(R.id.GifImageView);
-        gifImageView.setGifImageResource(R.drawable.draw);
+        WebView webView = (WebView) findViewById(R.id.wvGifHelp);
+        webView.loadUrl("file:android_res/drawable/draw.gif");
 
     }
 }
