@@ -4,28 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context="com.example.erikj.sensor_standoffapp.HelpActivity">
 
     <WebView
         android:id="@+id/wvGifHelp"
-        android:layout_width="185dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/svHelpInstructions"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="194dp"
+        android:layout_height="270dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/svHelpInstructions" />
 
     <ScrollView
         android:id="@+id/svHelpInstructions"
         android:layout_width="0dp"
-        android:layout_height="251dp"
+        android:layout_height="375dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/wvGifHelp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.047">
 
         <TextView
             android:id="@+id/tvHelpInstructions"
@@ -33,7 +35,10 @@
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
             android:paddingBottom="64dp"
-            android:text="@string/tvHelpInstructions" />
+            android:text="@string/tvHelpInstructions"
+            android:textColor="#552222"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
 
     </ScrollView>
 

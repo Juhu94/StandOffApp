@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.julia.sensor_standoffapp.HighscoreActivity">
+    android:background="@drawable/background"
+    tools:context="com.example.erikj.sensor_standoffapp.HighscoreActivity">
 
     <ListView
         android:id="@+id/lvScoreList"
         android:layout_width="368dp"
-        android:layout_height="0dp"
+        android:layout_height="292dp"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
