@@ -1,4 +1,4 @@
-package com.example.julian.sensor_standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -42,8 +42,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     private long timeEnd;
 
     private static int opponentsTotalPoints = 0;
-    private int mTotalPoints = -1;
-    private static int finalResultClient = -1;
+    private static int mTotalPoints = -1;
+    private static int hostPoints = -1;
     private static int finalResultFromHost = -1;
 
     private SensorManager mSensorManager;
@@ -133,7 +133,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         vibrator = null;
     }
 
-    public void startGame(){
+    public synchronized void startGame(){
         Log.d(TAG, "START GAME!");
         mTotalPoints = -1;
         opponentsTotalPoints = -1;
@@ -151,14 +151,14 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    public void proxyTestStart(){
+    public synchronized void proxyTestStart(){
         timeStart = System.currentTimeMillis();
         gyroTrigger = true;
         average = 0.0f;
         accAverage.clear();
     }
 
-    public void proxyTestEnd(){
+    public synchronized void proxyTestEnd(){
         timeEnd = System.currentTimeMillis();
         proxyTrigger = false;
         gyroTrigger = false;
@@ -224,8 +224,16 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                 }
                 average = average/ accAverage.size();
                 mTotalPoints = (100 - (int)Math.abs(average * 100));
-                mTotalPoints = (mTotalPoints + (375 - (int) (timeStart -timeReact)));
-                mTotalPoints = (mTotalPoints + (375 - (int) (timeEnd - timeStart)));
+                Log.d(TAG, "mTotalPoints + average: " +mTotalPoints);
+                mTotalPoints = (mTotalPoints + (50 - (int) ((timeStart - timeReact) / 6)));
+                Log.d(TAG, "mTotalPoints + totalTime: " +mTotalPoints);
+                Log.d(TAG, "totalTime: " + (int) ((timeStart - timeReact) / 6));
+                mTotalPoints = (mTotalPoints + (105 - (int) ((timeEnd - timeStart) / 6)));
+                Log.d(TAG, "mTotalPoints + reacTime: " +mTotalPoints);
+                Log.d(TAG, "totalTime: " + (int) ((timeEnd - timeStart) / 6));
+                if(mTotalPoints <= 0){
+                    mTotalPoints = 0;
+                }
                 Log.d(TAG, "Total points: " +mTotalPoints);
             }else{
                 Log.d(TAG,"Av någon anledning är bluetoothConnectedThread null");
@@ -237,6 +245,22 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                 printResults();
             }
         }else if(!multiplayer){
+            for (int i = 0; i < accAverage.size(); i++){               //calculates the average accuracy
+                average += accAverage.get(i);
+            }
+            average = average/ accAverage.size();
+            mTotalPoints = (100 - (int)Math.abs(average * 100));
+            Log.d(TAG, "mTotalPoints + average: " +mTotalPoints);
+            mTotalPoints = (mTotalPoints + (50 - (int) ((timeStart - timeReact) / 6)));
+            Log.d(TAG, "mTotalPoints + totalTime: " +mTotalPoints);
+            Log.d(TAG, "totalTime: " + (int) ((timeStart - timeReact) / 6));
+            mTotalPoints = (mTotalPoints + (105 - (int) ((timeEnd - timeStart) / 6)));
+            Log.d(TAG, "mTotalPoints + reacTime: " +mTotalPoints);
+            Log.d(TAG, "totalTime: " + (int) ((timeEnd - timeStart) / 6));
+            if(mTotalPoints <= 0){
+                mTotalPoints = 0;
+            }
+            Log.d(TAG, "Total points: " +mTotalPoints);
             printResults();
         }
     }
@@ -246,17 +270,18 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         playerTwoPointsArrived = true;
     }
 
-    public synchronized static void setFinalResult(int result){
-        switch (result){
-            case Constants.YOU_WON:
-                finalResultFromHost = Constants.YOU_LOST;
-                break;
-            case Constants.YOU_LOST:
-                finalResultFromHost = Constants.YOU_WON;
-                break;
-            case Constants.DRAW:
-                finalResultFromHost = Constants.DRAW;
-                break;
+    public synchronized static void setFinalResult(int pointsFromHost){
+        hostPoints = pointsFromHost;
+        Log.d(TAG, "Host points: " +hostPoints);
+        if(mTotalPoints > hostPoints){
+            finalResultFromHost = Constants.YOU_WON;
+            Log.d(TAG, "YOU WON");
+        }else if(mTotalPoints < hostPoints){
+            finalResultFromHost = Constants.YOU_LOST;
+            Log.d(TAG, "YOU LOST");
+        }else{
+            finalResultFromHost = Constants.DRAW;
+            Log.d(TAG, "DRAW");
         }
         finalResultHasArrived = true;
     }
@@ -285,7 +310,9 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         intent.putExtra("timeEnd", timeEnd);
         intent.putExtra("totalTime", timeEnd - timeStart);      //the draw time
         intent.putExtra("reaction", timeStart - timeReact);     //the react time
-        intent.putExtra("accurate", average);                         //the accuracy
+        intent.putExtra("accurate", average);
+        intent.putExtra("myPoints", mTotalPoints);
+        //the accuracy
         /*if(multiplayer){
            // mConnectedThread.setDataBool(false);
             sendData();
@@ -316,14 +343,18 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                 intent.putExtra("finalResult", finalResult);
                 intent.putExtra("opponentsPoints: ", opponentsTotalPoints);
                 intent.putExtra("multiplayer", true);
-                mConnectedThread.write(finalResult);
+                mConnectedThread.write(mTotalPoints);
             }else if(!mConnectedThread.getHostStatus()){
                 while(!finalResultHasArrived);
                 Log.d(TAG, "FINAL RESULT HAS ARRIVED");
                 intent.putExtra("finalResult", finalResultFromHost);
+                intent.putExtra("hostPoints", hostPoints);
                 intent.putExtra("multiplayer", true);
                 Log.d(TAG, "" +opponentsTotalPoints);
             }
+        }
+        if(multiplayer){
+            mConnectedThread.cancel();
         }
         startActivity(intent);
     }

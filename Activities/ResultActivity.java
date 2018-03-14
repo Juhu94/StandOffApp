@@ -1,4 +1,4 @@
-package com.example.erikj.sensor_standoffapp;
+package com.example.julia.sensor_standoffapp;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +25,6 @@ public class ResultActivity extends AppCompatActivity {
     private EditText etName;
     private TextView tvWinOrLose;
 
-
     private DBHandler dbHandler;
 
     private Context context;
@@ -38,7 +37,7 @@ public class ResultActivity extends AppCompatActivity {
     private Button btnSaveScore;
 
     private int totalPoints;
-    private int P2TotalPoints;
+    private int opponentsPoints;
     private int finalResult;
 
     private Score score;
@@ -73,12 +72,15 @@ public class ResultActivity extends AppCompatActivity {
         time = intent.getLongExtra("totalTime", 0);
         react = intent.getLongExtra("reaction", 0);
         acc = intent.getDoubleExtra("accurate", 0);
+        totalPoints = intent.getIntExtra("myPoints", 0);
+        opponentsPoints = intent.getIntExtra("hostPoints", 0);
 
         tvSTime.setText(Long.toString(intent.getLongExtra("timeStart", 0)));
         tvETime.setText(Long.toString(intent.getLongExtra("timeEnd", 0)));
         tvTime.setText(Long.toString(time));       //the draw time
         tvReact.setText(Long.toString(react));
         tvAcc.setText(Double.toString(acc));
+        tvPlayerTwoPoints.setText(Integer.toString(opponentsPoints));
 
         if (intent.getBooleanExtra("multiplayer", false)){
             updatePlayerTwo(intent);
@@ -93,9 +95,6 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
-        totalPoints = (100 - (int)Math.abs(acc * 100));
-        totalPoints = (totalPoints + (375 - (int) react));
-        totalPoints = (totalPoints + (375 - (int) time));
         Log.d("DeviceListActivity", String.valueOf(totalPoints));
         tvResult.setText(Integer.toString(totalPoints));        // ca 300 points max
 

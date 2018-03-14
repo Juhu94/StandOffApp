@@ -1,4 +1,4 @@
-package com.example.julian.sensor_standoffapp;
+package com.example.julia.sensor_standoffapp;
 
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -87,7 +87,7 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
         return this.host;
     }
 
-    public void write(byte[] bytes) {
+  /*  public void write(byte[] bytes) {
         try {
             dataIn =false; // <--- tabort?
             mOutputStream.write(bytes);
@@ -95,7 +95,7 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    } */
 
     public void write(int message){
         try{
@@ -107,13 +107,13 @@ public class BluetoothConnectedThread extends Thread implements Serializable{
         }
     }
 
-    public void write(String str){
+ /*   public void write(String str){
         try {
             write(str.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-    }
+    } */
 
     private void messageHandler(int message){
         Log.d(TAG, Integer.toString(message));
