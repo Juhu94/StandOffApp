@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -148,6 +148,16 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         }else {
             getWindow().getDecorView().setBackgroundColor(Color.RED);
             Toast.makeText(context,"No cheating! ",Toast.LENGTH_SHORT).show();
+            if(multiplayer){
+                if(!mConnectedThread.getHostStatus()){
+                    mConnectedThread.write(0);
+                    mConnectedThread.cancel();
+                }else if (mConnectedThread.getHostStatus()){
+                    while(!playerTwoPointsArrived );
+                    mConnectedThread.write(0);
+                    mConnectedThread.cancel();
+                }
+            }
         }
     }
 
@@ -284,20 +294,21 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
             Log.d(TAG, "DRAW");
         }
         finalResultHasArrived = true;
+        Log.d(TAG, "finalResultHasArrived: true");
     }
 
-    private void sendData(){
-        Log.d(TAG, timeStart + "\n" + timeEnd + "\n" + timeReact + "\n" + average);
-        if(mConnectedThread != null) {
-            int totalPoints = (100 - (int)Math.abs(average * 100));
-            totalPoints = (totalPoints + (375 - (int) (timeStart - timeReact)));
-            totalPoints = (totalPoints + (375 - (int) (timeEnd - timeStart)));
-            Log.d(TAG, "Total points: " +totalPoints);
-            mConnectedThread.write(totalPoints);
-        }else{
-            Log.d(TAG,"Av någon anledning är bluetoothConnectedThread null");
-        }
-    }
+//    private void sendData(){
+//        Log.d(TAG, timeStart + "\n" + timeEnd + "\n" + timeReact + "\n" + average);
+//        if(mConnectedThread != null) {
+//            int totalPoints = (100 - (int)Math.abs(average * 100));
+//            totalPoints = (totalPoints + (375 - (int) (timeStart - timeReact)));
+//            totalPoints = (totalPoints + (375 - (int) (timeEnd - timeStart)));
+//            Log.d(TAG, "Total points: " +totalPoints);
+//            mConnectedThread.write(totalPoints);
+//        }else{
+//            Log.d(TAG,"Av någon anledning är bluetoothConnectedThread null");
+//        }
+//    }
 
     private synchronized void printResults() {
 
@@ -345,6 +356,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                 intent.putExtra("multiplayer", true);
                 mConnectedThread.write(mTotalPoints);
             }else if(!mConnectedThread.getHostStatus()){
+                Log.d(TAG, "WAITING FOR FINAL RESULT IN A LOOP");
                 while(!finalResultHasArrived);
                 Log.d(TAG, "FINAL RESULT HAS ARRIVED");
                 intent.putExtra("finalResult", finalResultFromHost);
