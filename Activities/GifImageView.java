@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 
 import android.content.Context;
 import android.graphics.Canvas;

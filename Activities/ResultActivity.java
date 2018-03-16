@@ -1,4 +1,4 @@
-package com.example.julia.sensor_standoffapp;
+package com.mah.simon.standoffapp;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -86,6 +86,7 @@ public class ResultActivity extends AppCompatActivity {
             updatePlayerTwo(intent);
         } else{
             tvOppPoints.setVisibility(View.INVISIBLE);
+            tvPlayerTwoPoints.setVisibility(View.INVISIBLE);
         }
 
         btnMenu.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +97,7 @@ public class ResultActivity extends AppCompatActivity {
         });
 
         Log.d("DeviceListActivity", String.valueOf(totalPoints));
-        tvResult.setText(Integer.toString(totalPoints));        // ca 300 points max
+        tvResult.setText(Integer.toString(totalPoints));
 
         btnSaveScore.setOnClickListener(new View.OnClickListener() {
             @Override
