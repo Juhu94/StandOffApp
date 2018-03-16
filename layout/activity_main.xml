@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bgmain"
-    tools:context="com.example.erikj.sensor_standoffapp.MainActivity">
+    tools:context="com.mah.simon.standoffapp.MainActivity">
 
     <TextView
         android:id="@+id/tvTitle"
