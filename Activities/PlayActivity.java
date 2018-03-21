@@ -120,6 +120,12 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         super.onPause();
         mSensorManager.unregisterListener(this);
     }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        register();
+    }
 
     @Override
     protected void onDestroy(){
