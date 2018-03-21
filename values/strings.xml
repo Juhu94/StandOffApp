@@ -11,7 +11,7 @@
     <string name="tvReaction">Reaction: </string>
     <string name="tvTotalTime">Total time: </string>
     <string name="btnMenu">Back to menu</string>
-    <string name="tvInstructions">Place your phone beside your leg and wait for the vibration then draw.</string>
+    <string name="tvInstructions">Place your phone beside your leg with screen facing inwards. Then wait for the vibration and draw.</string>
     <string name="btnSaveScore">Save score</string>
     <string name="etName">Enter name</string>
     <string name="tvWin">You win!</string>
