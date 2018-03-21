@@ -65,6 +65,9 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         context = this;
         
         proxyNewRead = true;
+        
+        WebView webView = (WebView) findViewById(R.id.wvGif);
+        webView.loadUrl("file:android_res/drawable/draw.gif");
 
         Intent intent = getIntent();
         multiplayer = intent.getBooleanExtra("multiplayer", false);
